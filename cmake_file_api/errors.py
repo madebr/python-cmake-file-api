@@ -1,0 +1,2 @@
+class CMakeException(Exception):
+    pass
