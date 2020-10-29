@@ -14,6 +14,7 @@ class CacheEntryType(Enum):
     TYPE_STRING = "STRING"
     TYPE_INTERNAL = "INTERNAL"
     TYPE_STATIC = "STATIC"
+    TYPE_UNINITIALIZED = "UNINITIALIZED"
 
 
 class CacheEntryProperty(object):
