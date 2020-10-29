@@ -177,6 +177,12 @@ class CodemodelV2(object):
         dikt = json.load(path.open())
         return cls.from_dict(dikt, reply_path)
 
+    def get_configuration(self, name: str) -> CMakeConfiguration:
+        try:
+            return next(c for c in self.configurations if c.name == name)
+        except StopIteration:
+            raise KeyError("Unknown configuration")
+
     def __repr__(self) -> str:
         return "{}(version={}, paths={}, configurations={})".format(
             type(self).__name__,
