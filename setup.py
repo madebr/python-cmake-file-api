@@ -8,7 +8,7 @@ packages = find_packages(exclude=("tests", "tests.*", "*.tests"))
 
 setup(
     name="cmake-file-api",
-    version="0.0.1",
+    version="0.0.2",
     license="MIT",
     packages=packages,
     author="Anonymous Maarten",
