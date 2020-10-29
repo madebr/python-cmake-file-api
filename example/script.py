@@ -13,7 +13,7 @@ except FileNotFoundError:
     pass
 build_path.mkdir(exist_ok=True)
 
-cmake_project = CMakeProject(source_path, build_path, api_version=1)
+cmake_project = CMakeProject(build_path, source_path, api_version=1)
 cmake_project.cmake_file_api.instrument_all()
 cmake_project.configure(quiet=True)
 

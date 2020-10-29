@@ -1,18 +1,17 @@
 from pathlib import Path
 import subprocess
-from typing import Dict, List, Optional
+from typing import List, Optional
 
-from .kinds.kind import ObjectKind
 from .reply.api import REPLY_API
 
 
 class CMakeProject(object):
     __slots__ = ("_source_path", "_build_path", "_api_version", "_cmake")
 
-    def __init__(self, source_path: Optional[Path], build_path: Path, api_version: Optional[int]=None, cmake: Optional[str]=None):
+    def __init__(self, build_path: Path, source_path: Optional[Path]=None, api_version: Optional[int]=None, cmake: Optional[str]=None):
         if not build_path:
             raise ValueError("Need a build folder")
-        self._source_path = Path(source_path)
+        self._source_path = Path(source_path) if source_path else None
         self._build_path = Path(build_path)
         self._api_version = api_version if api_version is not None else self.most_recent_api_version()
         self._cmake = cmake or "cmake"
@@ -41,6 +40,8 @@ class CMakeProject(object):
         args = [str(self._cmake)]
         if self._source_path:
             args.append(str(self._source_path))
+        else:
+            args.append(".")
         subprocess.check_call(args, cwd=str(self._build_path), stdout=stdout)
 
     @property

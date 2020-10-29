@@ -28,7 +28,7 @@ def test_codemodelV2(build_tree, capsys):
         void print_something(const std::string &s) {
             std::cout << "A string:" << s << "\n";
         }"""))
-    project = CMakeProject(build_tree.source, build_tree.build, api_version=1)
+    project = CMakeProject( build_tree.build, build_tree.source,api_version=1)
     object_kind = ObjectKind.CODEMODEL
     kind_version = 2
     project.cmake_file_api.instrument(object_kind, kind_version)
@@ -95,7 +95,7 @@ def test_complete_project(build_tree, capsys):
             print_extra("Hello from main!");
             return 0;
         }"""))
-    project = CMakeProject(build_tree.source, build_tree.build, api_version=1)
+    project = CMakeProject(build_tree.build, build_tree.source, api_version=1)
     project.cmake_file_api.instrument_all()
     project.reconfigure(quiet=True)
     data = project.cmake_file_api.inspect_all()
