@@ -11,8 +11,8 @@ class CMakeProject(object):
     def __init__(self, build_path: Path, source_path: Optional[Path]=None, api_version: Optional[int]=None, cmake: Optional[str]=None):
         if not build_path:
             raise ValueError("Need a build folder")
-        self._source_path = Path(source_path) if source_path else None
-        self._build_path = Path(build_path)
+        self._source_path = Path(source_path).resolve() if source_path else None
+        self._build_path = Path(build_path).resolve()
         self._api_version = api_version if api_version is not None else self.most_recent_api_version()
         self._cmake = cmake or "cmake"
 
