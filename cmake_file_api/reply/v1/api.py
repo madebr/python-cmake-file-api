@@ -34,9 +34,8 @@ class CMakeFileApiV1(object):
     @staticmethod
     def _find_index_path(reply_path: Path) -> Optional[Path]:
         try:
-            indexes = list(reply_path.glob("index-*.json"))
-            return Path(indexes[0])
-        except IndexError:
+            return next(reply_path.glob("index-*.json"))
+        except StopIteration:
             return None
 
     def find_index_path(self) -> Optional[Path]:
