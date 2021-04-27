@@ -13,7 +13,7 @@ from cmake_file_api.kinds.codemodel.api import CODEMODEL_API
 
 @functools.lru_cache(1)  # FIXME: CPython 3.9 provides `functools.cache`
 def cmake_version():
-    cmake_version_raw = subprocess.check_output(["cmake", "--version"], text=True)
+    cmake_version_raw = subprocess.check_output(["cmake", "--version"]).decode()
     cmake_version_match = next(re.finditer(r"cmake version ((?:[0-9.]+.)[0-9.]+)", cmake_version_raw, flags=re.I))
     version_list = cmake_version_match.group(1).split(".")
     version_tuple = tuple(int(v) for v in version_list)
