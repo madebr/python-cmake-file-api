@@ -48,7 +48,7 @@ class CMakeDirectory(object):
         self.build = build
         self.parentDirectory = None  # type: Optional[CMakeDirectory]
         self.childDirectories = []  # type: List[CMakeDirectory]
-        self.project = None  # type: CMakeProject
+        self.project = None  # type: Optional[CMakeProject]
         self.targets = []  # type: List[CMakeTarget]
         self.minimumCMakeVersion = minimumCMakeVersion
         self.hasInstallRule = hasInstallRule
