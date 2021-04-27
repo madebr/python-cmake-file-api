@@ -1,5 +1,6 @@
 import json
 from pathlib import Path
+import re
 from typing import Dict, List, Tuple
 
 
@@ -125,7 +126,9 @@ class CMakeReply(object):
         stateful = {}
         unknowns = []
         for k, v in dikt.items():
-            import re
+            if "error" in v:
+                unknowns.append(k)
+                continue
             stateless_match = re.match(r"([a-zA-Z0-9]+)-v([0-9]+)", k)
             if stateless_match:
                 kind, version = ObjectKind(stateless_match.group(1)), int(stateless_match.group(2))
