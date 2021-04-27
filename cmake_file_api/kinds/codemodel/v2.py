@@ -12,10 +12,10 @@ class CMakeProject(object):
 
     def __init__(self, name: str):
         self.name = name
-        self.parentProject: Optional[CMakeProject] = None
-        self.childProjects: List[CMakeProject] = []
-        self.directories: List[CMakeDirectory] = []
-        self.targets: List[CMakeTarget] = []
+        self.parentProject = None  # type: Optional[CMakeProject]
+        self.childProjects = []  # type: List[CMakeProject]
+        self.directories = []  # type: List[CMakeDirectory]
+        self.targets = []  # type:List[CMakeTarget]
 
     @classmethod
     def from_dict(cls, dikt: Dict) -> "CMakeProject":
@@ -46,10 +46,10 @@ class CMakeDirectory(object):
     def __init__(self, source: Path, build: Path, minimumCMakeVersion: Optional[str], hasInstallRule: bool):
         self.source = source
         self.build = build
-        self.parentDirectory: Optional[CMakeDirectory] = None
-        self.childDirectories: List[CMakeDirectory] = []
-        self.project: CMakeProject = None
-        self.targets: List[CMakeTarget] = []
+        self.parentDirectory = None  # type: Optional[CMakeDirectory]
+        self.childDirectories = []  # type: List[CMakeDirectory]
+        self.project = None  # type: CMakeProject
+        self.targets = []  # type: List[CMakeTarget]
         self.minimumCMakeVersion = minimumCMakeVersion
         self.hasInstallRule = hasInstallRule
 

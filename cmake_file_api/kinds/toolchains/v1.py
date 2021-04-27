@@ -10,10 +10,10 @@ class CMakeToolchainCompilerImplicit(object):
     __slots__ = ("includeDirectories", "linkDirectories", "linkFrameworkDirectories", "linkLibraries")
 
     def __init__(self):
-        self.includeDirectories: List[Path] = []
-        self.linkDirectories: List[Path] = []
-        self.linkFrameworkDirectories: List[Path] = []
-        self.linkLibraries: List[str] = []
+        self.includeDirectories = []  # type: List[Path]
+        self.linkDirectories = []  # type: List[Path]
+        self.linkFrameworkDirectories = []  # type: List[Path]
+        self.linkLibraries = []  # type: List[str]
 
     @classmethod
     def from_dict(cls, dikt: Dict) -> "CMakeToolchainCompilerImplicit":

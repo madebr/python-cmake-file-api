@@ -370,7 +370,7 @@ class TargetDependency(object):
 
     def __init__(self, id: str, backtrace: Optional[BacktraceNode]):
         self.id = id
-        self.target: CodemodelTargetV2 = None
+        self.target = None  # type: CodemodelTargetV2
         self.backtrace = backtrace
 
     def update_dependency(self, lut_id_target: Dict[str, "CodemodelTargetV2"]):
@@ -400,8 +400,8 @@ class TargetSource(object):
         self.path = path
         self.isGenerated = isGenerated
         self.backtrace = backtrace
-        self.compileGroup: Optional[TargetCompileGroup] = None
-        self.sourceGroup: Optional[TargetSourceGroup] = None
+        self.compileGroup = None  # type: Optional[TargetCompileGroup]
+        self.sourceGroup = None  # type: Optional[TargetSourceGroup]
 
     @classmethod
     def from_dict(cls, dikt: Dict, backtraceGraph: BacktraceGraph) -> "TargetSource":
