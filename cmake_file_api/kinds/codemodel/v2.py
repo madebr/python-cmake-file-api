@@ -188,5 +188,5 @@ class CodemodelV2(object):
             type(self).__name__,
             self.version,
             self.paths,
-            list(configuration.name for configuration in self.configurations),
+            self.configurations,
         )
