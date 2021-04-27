@@ -101,7 +101,7 @@ class CMakeTarget(object):
         name = dikt["name"]
         directory = directories[dikt["directoryIndex"]]
         project = projects[dikt["projectIndex"]]
-        jsonFile = reply_path / Path(dikt["jsonFile"])
+        jsonFile = reply_path / dikt["jsonFile"]
         target = CodemodelTargetV2.from_path(jsonFile, reply_path)
         return cls(name, directory, project, jsonFile, target)
 
