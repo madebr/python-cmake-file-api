@@ -76,7 +76,7 @@ class CMakeFileApiV1(object):
         api = OBJECT_KINDS_API.get(kind, {}).get(kind_version, None)
         if api is None:
             return None
-        return api.from_path(reply_path / data_path.jsonFile, reply_path)
+        return api.from_path(reply_path / str(data_path.jsonFile), reply_path)
 
     def inspect_all(self) -> Dict[ObjectKind, Dict[int, object]]:
         reply_path = self._create_reply_path()
