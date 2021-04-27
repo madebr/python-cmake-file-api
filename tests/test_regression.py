@@ -1,4 +1,7 @@
 import collections
+import functools
+import re
+import subprocess
 import textwrap
 
 import pytest
@@ -8,6 +11,16 @@ from cmake_file_api.kinds.kind import ObjectKind
 from cmake_file_api.kinds.codemodel.api import CODEMODEL_API
 
 
+@functools.cache
+def cmake_version():
+    cmake_version_raw = subprocess.check_output(["cmake", "--version"], text=True)
+    cmake_version_match = next(re.finditer(r"cmake version ((?:[0-9.]+.)[0-9.]+)", cmake_version_raw, flags=re.I))
+    version_list = cmake_version_match.group(1).split(".")
+    version_tuple = tuple(int(v) for v in version_list)
+    return version_tuple
+
+CMAKE_SUPPORTS_TOOLCHAINS_V1 = cmake_version() >= (3, 20)
+
 @pytest.fixture
 def build_tree(tmp_path_factory):
     SrcBuild = collections.namedtuple("SrcBuild", ("source", "build"))
@@ -16,7 +29,8 @@ def build_tree(tmp_path_factory):
     return SrcBuild(src, build)
 
 
-def test_codemodelV2(build_tree, capsys):
+@pytest.fixture
+def simple_cxx_project(build_tree):
     (build_tree.source / "CMakeLists.txt").write_text(textwrap.dedent("""\
         cmake_minimum_required(VERSION 3.0)
         project(demoproject)
@@ -28,17 +42,11 @@ def test_codemodelV2(build_tree, capsys):
         void print_something(const std::string &s) {
             std::cout << "A string:" << s << "\n";
         }"""))
-    project = CMakeProject( build_tree.build, build_tree.source,api_version=1)
-    object_kind = ObjectKind.CODEMODEL
-    kind_version = 2
-    project.cmake_file_api.instrument(object_kind, kind_version)
-    project.reconfigure(quiet=True)
-    data = project.cmake_file_api.inspect(object_kind, kind_version)
-    assert data is not None
-    assert isinstance(data, CODEMODEL_API[kind_version])
+    return build_tree
 
 
-def test_complete_project(build_tree, capsys):
+@pytest.fixture
+def complex_cxx_project(build_tree):
     (build_tree.source / "CMakeLists.txt").write_text(textwrap.dedent("""\
         cmake_minimum_required(VERSION 3.0)
         project(demoproject)
@@ -95,8 +103,39 @@ def test_complete_project(build_tree, capsys):
             print_extra("Hello from main!");
             return 0;
         }"""))
-    project = CMakeProject(build_tree.build, build_tree.source, api_version=1)
+    return build_tree
+
+
+def test_codemodelV2(simple_cxx_project, capsys):
+    project = CMakeProject(simple_cxx_project.build, simple_cxx_project.source, api_version=1)
+    object_kind = ObjectKind.CODEMODEL
+    kind_version = 2
+    project.cmake_file_api.instrument(object_kind, kind_version)
+    project.reconfigure(quiet=True)
+    data = project.cmake_file_api.inspect(object_kind, kind_version)
+    assert data is not None
+    assert isinstance(data, CODEMODEL_API[kind_version])
+
+
+def test_complete_project(complex_cxx_project, capsys):
+    project = CMakeProject(complex_cxx_project.build, complex_cxx_project.source, api_version=1)
     project.cmake_file_api.instrument_all()
     project.reconfigure(quiet=True)
     data = project.cmake_file_api.inspect_all()
     assert data is not None
+
+
+@pytest.mark.skipif(not CMAKE_SUPPORTS_TOOLCHAINS_V1, reason="CMake does not support toolchains V1 kind")
+def test_toolchain_kind_cxx(complex_cxx_project, capsys):
+    project = CMakeProject(complex_cxx_project.build, complex_cxx_project.source, api_version=1)
+    project.cmake_file_api.instrument(ObjectKind.TOOLCHAINS, 1)
+    project.reconfigure(quiet=True)
+    kind_obj = project.cmake_file_api.inspect(ObjectKind.TOOLCHAINS, 1)
+
+    from cmake_file_api.kinds.toolchains.v1 import ToolchainsV1
+    from cmake_file_api.kinds.common import VersionMajorMinor
+
+    assert isinstance(kind_obj, ToolchainsV1)
+    assert isinstance(kind_obj.version, VersionMajorMinor)
+    assert kind_obj.version.major == 1
+    assert "CXX" in tuple(toolchain.language for toolchain in kind_obj.toolchains)
