@@ -87,6 +87,6 @@ class CMakeFileApiV1(object):
             api = OBJECT_KINDS_API.get(kind, {}).get(kind_version, None)
             if api is None:
                 continue
-            kind_data = api.from_path(reply_path / reply_file_ref.jsonFile, reply_path)
+            kind_data = api.from_path(reply_path / str(reply_file_ref.jsonFile), reply_path)
             result.setdefault(kind, {})[kind_version] = kind_data
         return result
