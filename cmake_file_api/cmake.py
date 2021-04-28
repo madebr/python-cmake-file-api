@@ -13,7 +13,7 @@ class CMakeProject(object):
             raise ValueError("Need a build folder")
         if isinstance(source_path, str):
             source_path = Path(source_path).resolve()
-        self._source_path = source_path.resolve()
+        self._source_path = source_path.resolve() if source_path else None
         if isinstance(build_path, str):
             build_path = Path(build_path).resolve()
         self._build_path = build_path
