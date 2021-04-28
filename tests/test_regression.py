@@ -124,6 +124,12 @@ def test_complete_project(complex_cxx_project, capsys):
     data = project.cmake_file_api.inspect_all()
     assert data is not None
 
+    # Check if project also works without specifying the source directory
+    project2 = CMakeProject(complex_cxx_project.build, api_version=1)
+    project2.cmake_file_api.instrument_all()
+    project2.reconfigure(quiet=True)
+    data2 = project2.cmake_file_api.inspect_all()
+    assert data2 is not None
 
 @pytest.mark.skipif(not CMAKE_SUPPORTS_TOOLCHAINS_V1, reason="CMake does not support toolchains V1 kind")
 def test_toolchain_kind_cxx(complex_cxx_project, capsys):
