@@ -61,7 +61,7 @@ class CMakeToolchainCompiler(object):
 class CMakeToolchain(object):
     __slots__ = ("language", "compiler", "sourceFileExtensions")
 
-    def __init__(self, language: str, compiler: CMakeToolchainCompiler, sourceFileExtensions: List[str]):
+    def __init__(self, language: str, compiler: CMakeToolchainCompiler, sourceFileExtensions: Optional[List[str]]):
         self.language = language
         self.compiler = compiler
         self.sourceFileExtensions = sourceFileExtensions
@@ -70,7 +70,8 @@ class CMakeToolchain(object):
     def from_dict(cls, dikt: Dict) -> "CMakeToolchain":
         language = dikt["language"]
         compiler = CMakeToolchainCompiler.from_dict(dikt["compiler"])
-        sourceFileExtensions = dikt["sourceFileExtensions"]
+        sourceFileExtensions = dikt.get("sourceFileExtensions")
+
         return cls(language, compiler, sourceFileExtensions)
 
     def __repr__(self) -> str:

@@ -49,7 +49,8 @@ def simple_cxx_project(build_tree):
 def complex_cxx_project(build_tree):
     (build_tree.source / "CMakeLists.txt").write_text(textwrap.dedent("""\
         cmake_minimum_required(VERSION 3.0)
-        project(demoproject)
+        project(demoproject NONE)
+        enable_language(CXX)
         add_library(lib_noinstall lib1.cpp)
         add_library(lib_install lib1.cpp)
         install(TARGETS lib_install)
