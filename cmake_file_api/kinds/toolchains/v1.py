@@ -40,7 +40,7 @@ class CMakeToolchainCompiler(object):
         self.implicit = implicit
 
     @classmethod
-    def from_dict(cls, dikt: Dict) -> "CMakeToolchain":
+    def from_dict(cls, dikt: Dict) -> "CMakeToolchainCompiler":
         id = dikt.get("id")
         path = Path(dikt["path"]) if "path" in dikt else None
         target = dikt.get("target")
