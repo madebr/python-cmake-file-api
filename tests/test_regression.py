@@ -54,6 +54,8 @@ def complex_cxx_project(build_tree):
         project(demoproject C)
         enable_language(CXX)
 
+        enable_testing()
+
         add_library(lib_interface INTERFACE)
         target_include_directories(lib_interface INTERFACE "${CMAKE_CURRENT_SOURCE_DIR}")
         target_sources(lib_interface
@@ -70,12 +72,18 @@ def complex_cxx_project(build_tree):
         set_target_properties(lib_interface PROPERTIES FOLDER "${CMAKE_CURRENT_SOURCE_DIR}")
 
         add_library(lib1_noinstall lib1.cpp)
+        add_test(lib1_noinstall lib1_noinstall)
 
         add_library(lib1_install lib1.cpp)
         install(TARGETS lib1_install)
+        add_test(NAME lib1_install COMMAND lib1_install)
+        set_property(TEST lib1_install PROPERTY TIMEOUT 10)
 
         add_library(lib2_noinstall STATIC lib2.cpp)
         target_link_libraries(lib2_noinstall PRIVATE lib1_noinstall)
+        add_test(NAME lib2_noinstall COMMAND lib2_noinstall)
+        set_property(TEST lib2_noinstall PROPERTY TIMEOUT 10)
+        set_property(TEST lib2_noinstall PROPERTY ENVIRONMENT "HELLO1=1;HELLO2=2")
 
         add_library(lib2_install lib2.cpp)
         target_link_libraries(lib2_install PRIVATE lib1_install)
@@ -168,6 +176,8 @@ def test_codemodelV2(simple_cxx_project, capsys):
     data = project.cmake_file_api.inspect(object_kind, kind_version)
     assert data is not None
     assert isinstance(data, CODEMODEL_API[kind_version])
+    tests = project._query_tests()
+    assert tests is not None
 
 
 def test_complete_project(complex_cxx_project, capsys):
@@ -176,6 +186,8 @@ def test_complete_project(complex_cxx_project, capsys):
     project.reconfigure(quiet=True)
     data = project.cmake_file_api.inspect_all()
     assert data is not None
+    tests = project._query_tests()
+    assert tests is not None
 
     # Check if project also works without specifying the source directory
     project2 = CMakeProject(complex_cxx_project.build, api_version=1)
@@ -199,3 +211,6 @@ def test_toolchain_kind_cxx(complex_cxx_project, capsys):
     assert isinstance(kind_obj.version, VersionMajorMinor)
     assert kind_obj.version.major == 1
     assert "CXX" in tuple(toolchain.language for toolchain in kind_obj.toolchains)
+
+    tests = project._query_tests()
+    assert tests is not None

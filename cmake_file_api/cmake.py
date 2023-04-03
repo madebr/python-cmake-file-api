@@ -2,15 +2,16 @@ from pathlib import Path
 import subprocess
 from typing import List, Optional, Union
 
+from .errors import CMakeException
 from .reply.api import REPLY_API
 
 PathLike = Union[Path, str]
 
 
 class CMakeProject(object):
-    __slots__ = ("_source_path", "_build_path", "_api_version", "_cmake")
+    __slots__ = ("_source_path", "_build_path", "_api_version", "_cmake", "_ctest")
 
-    def __init__(self, build_path: PathLike, source_path: Optional[PathLike]=None, api_version: Optional[int]=None, cmake: Optional[str]=None):
+    def __init__(self, build_path: PathLike, source_path: Optional[PathLike]=None, api_version: Optional[int]=None, cmake: Optional[str]=None, ctest: Optional[str]=None):
         if not build_path:
             raise ValueError("Need a build folder")
         if isinstance(build_path, str):
@@ -31,6 +32,7 @@ class CMakeProject(object):
             cmake = self._cache_lookup("CMAKE_COMMAND", cache)
 
         self._cmake = cmake or "cmake"
+        self._ctest = ctest or "ctest"
 
     @property
     def source_path(self) -> Optional[Path]:
@@ -76,3 +78,16 @@ class CMakeProject(object):
     @property
     def cmake_file_api(self):
         return REPLY_API[self._api_version](self._build_path)
+
+    def _query_tests(self, configuration: str=None, quiet: bool=True, test_path: Optional[PathLike]=None):
+        test_path = test_path if test_path is not None else self._build_path
+        args = [str(self._ctest), "--show-only=json-v1"]
+        if configuration:
+            args.extend(["-C", configuration])
+        try:
+            stderr = subprocess.DEVNULL if quiet else None
+            raw_text = subprocess.check_output(args, cwd=test_path, stderr=stderr, text=True)
+            from .kinds.ctestInfo.api import CTESTINFO_API
+            return CTESTINFO_API[1].from_text(raw_text, None)
+        except subprocess.CalledProcessError:
+            raise CMakeException

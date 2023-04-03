@@ -26,5 +26,7 @@ print("projects:", list(project.name for project in codemodel_v2.configurations[
 print("targets:", list(target.name for target in codemodel_v2.configurations[0].targets))
 print("target dependencies:", {target.name: list(dependency.target.name for dependency in target.target.dependencies) for target in codemodel_v2.configurations[0].targets})
 
+ctest_tests = cmake_project._query_tests()
 
-codemodel_v2 = results[ObjectKind.CODEMODEL][2]
+for test in ctest_tests.tests:
+    print("test:", test.name, "command:", test.command, "properties:", test.properties)

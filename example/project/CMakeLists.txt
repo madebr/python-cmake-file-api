@@ -2,6 +2,8 @@ cmake_minimum_required(VERSION 3.14)
 # The file-based api of cmake required CMake 3.14+
 project(test_project)
 
+enable_testing()
+
 include(GNUInstallDirs)
 
 add_subdirectory(base)
