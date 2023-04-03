@@ -1,0 +1,113 @@
+{
+    "backtraceGraph": {
+        "commands": [
+            "add_test",
+            "add_new_test"
+        ],
+        "files": [
+            "/Foobar/CMakeLists.txt"
+        ],
+        "nodes": [
+            {
+                "file": 0
+            },
+            {
+                "command": 0,
+                "file": 0,
+                "line": 6,
+                "parent": 0
+            },
+            {
+                "file": 0
+            },
+            {
+                "command": 1,
+                "file": 0,
+                "line": 11,
+                "parent": 2
+            },
+            {
+                "command": 0,
+                "file": 0,
+                "line": 8,
+                "parent": 3
+            },
+            {
+                "file": 0
+            },
+            {
+                "command": 1,
+                "file": 0,
+                "line": 12,
+                "parent": 5
+            },
+            {
+                "command": 0,
+                "file": 0,
+                "line": 8,
+                "parent": 6
+            }
+        ]
+    },
+    "kind": "ctestInfo",
+    "tests": [
+        {
+            "backtrace": 1,
+            "command": [
+                "/Foobar/build0/MagicMath",
+                "4"
+            ],
+            "name": "Test_runs",
+            "properties": [
+                {
+                    "name": "WORKING_DIRECTORY",
+                    "value": "/Foobar/build0"
+                }
+            ]
+        },
+        {
+            "backtrace": 4,
+            "command": [
+                "/Foobar/build0/MagicMath",
+                "9"
+            ],
+            "name": "Test_9_3",
+            "properties": [
+                {
+                    "name": "PASS_REGULAR_EXPRESSION",
+                    "value": [
+                        "3"
+                    ]
+                },
+                {
+                    "name": "WORKING_DIRECTORY",
+                    "value": "/Foobar/build0"
+                }
+            ]
+        },
+        {
+            "backtrace": 7,
+            "command": [
+                "/Foobar/build0/MagicMath",
+                "25"
+            ],
+            "name": "Test_25_5",
+            "properties": [
+                {
+                    "name": "PASS_REGULAR_EXPRESSION",
+                    "value": [
+                        "5"
+                    ]
+                },
+                {
+                    "name": "WORKING_DIRECTORY",
+                    "value": "/Foobar/build0"
+                }
+            ]
+        }
+    ],
+    "version": {
+        "major": 1,
+        "minor": 0
+    }
+}

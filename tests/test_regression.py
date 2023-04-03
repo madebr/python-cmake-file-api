@@ -1,4 +1,3 @@
-import collections
 import functools
 import re
 import subprocess
@@ -21,14 +20,6 @@ def cmake_version():
 
 
 CMAKE_SUPPORTS_TOOLCHAINS_V1 = cmake_version() >= (3, 20)
-
-
-@pytest.fixture
-def build_tree(tmp_path_factory):
-    SrcBuild = collections.namedtuple("SrcBuild", ("source", "build"))
-    src = tmp_path_factory.getbasetemp()
-    build = tmp_path_factory.mktemp("build")
-    return SrcBuild(src, build)
 
 
 @pytest.fixture
