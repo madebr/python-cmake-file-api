@@ -19,7 +19,9 @@ def cmake_version():
     version_tuple = tuple(int(v) for v in version_list)
     return version_tuple
 
+
 CMAKE_SUPPORTS_TOOLCHAINS_V1 = cmake_version() >= (3, 20)
+
 
 @pytest.fixture
 def build_tree(tmp_path_factory):
@@ -39,7 +41,7 @@ def simple_cxx_project(build_tree):
     (build_tree.source / "alib.cpp").write_text(textwrap.dedent(r"""\
         #include <iostream>
         #include <string>
-        void print_something(const std::string &s) {
+        void lib1_hello(const std::string &s) {
             std::cout << "A string:" << s << "\n";
         }"""))
     return build_tree
@@ -49,61 +51,111 @@ def simple_cxx_project(build_tree):
 def complex_cxx_project(build_tree):
     (build_tree.source / "CMakeLists.txt").write_text(textwrap.dedent("""\
         cmake_minimum_required(VERSION 3.0)
-        project(demoproject NONE)
+        project(demoproject C)
         enable_language(CXX)
-        add_library(lib_noinstall lib1.cpp)
-        add_library(lib_install lib1.cpp)
-        install(TARGETS lib_install)
-        add_library(libdep_noinstall lib2.cpp)
-        add_library(libdep_install lib2.cpp)
-        install(TARGETS libdep_install)
-        add_executable(exe_noinstall exe1.cpp)
-        add_executable(exe_install exe1.cpp)
-        install(TARGETS exe_install)
-        add_executable(exedep_noinstall exe2.cpp)
-        target_link_libraries(exedep_noinstall lib_noinstall)
-        add_executable(exedep_install exe2.cpp)
-        target_link_libraries(exedep_install lib_install)
-        install(TARGETS exedep_install)
-        add_executable(exedep2_noinstall exe3.cpp)
-        target_link_libraries(exedep2_noinstall libdep_noinstall)
-        add_executable(exedep2_install exe3.cpp)
-        target_link_libraries(exedep2_install libdep_install)
-        install(TARGETS exedep2_install)
+
+        add_library(lib_interface INTERFACE)
+        target_include_directories(lib_interface INTERFACE "${CMAKE_CURRENT_SOURCE_DIR}")
+        target_sources(lib_interface
+            PUBLIC
+                "${CMAKE_CURRENT_SOURCE_DIR}/interface.c"
+                "${CMAKE_CURRENT_SOURCE_DIR}/interface.h"
+        )
+        target_compile_definitions(lib_interface INTERFACE INTERFACE_HELLO)
+        source_group("Source files" CMakeLists.txt)
+        source_group(lib_interface FILES
+            # "${CMAKE_CURRENT_SOURCE_DIR}/interface.c"
+            "${CMAKE_CURRENT_SOURCE_DIR}/interface.h"
+        )
+        set_target_properties(lib_interface PROPERTIES FOLDER "${CMAKE_CURRENT_SOURCE_DIR}")
+
+        add_library(lib1_noinstall lib1.cpp)
+
+        add_library(lib1_install lib1.cpp)
+        install(TARGETS lib1_install)
+
+        add_library(lib2_noinstall STATIC lib2.cpp)
+        target_link_libraries(lib2_noinstall PRIVATE lib1_noinstall)
+
+        add_library(lib2_install lib2.cpp)
+        target_link_libraries(lib2_install PRIVATE lib1_install)
+        install(TARGETS lib2_install)
+
+        add_executable(exe1_noinstall exe1.cpp)
+
+        add_executable(exe1_install exe1.cpp)
+        install(TARGETS exe1_install)
+
+        add_executable(exe2dep_noinstall exe2.cpp)
+        target_link_libraries(exe2dep_noinstall PRIVATE lib1_noinstall)
+
+        add_executable(exe2dep_install exe2.cpp)
+        target_link_libraries(exe2dep_install lib1_install)
+        install(TARGETS exe2dep_install)
+
+        add_executable(exe3dep_noinstall exe3.cpp)
+        target_link_libraries(exe3dep_noinstall PRIVATE lib2_noinstall lib_interface)
+
+        add_executable(exe3dep_install exe3.cpp)
+        target_link_libraries(exe3dep_install PRIVATE lib2_install lib_interface)
+        install(TARGETS exe3dep_install)
+        """))
+    (build_tree.source / "interface.h").write_text(textwrap.dedent(r"""\
+        #include <stdio.h>
+        #ifdef __cplusplus
+        extern "C" {
+        #endif
+        extern void interface_hello(const char *s);
+        #ifdef __cplusplus
+        }
+        #endif
+        """))
+    (build_tree.source / "interface.c").write_text(textwrap.dedent(r"""\
+        #include "interface.h"
+        void interface_hello(const char* s) {
+            printf("Hello from interface: %s\n", s);
+        }
         """))
     (build_tree.source / "lib1.cpp").write_text(textwrap.dedent(r"""\
         #include <iostream>
         #include <string>
-        void print_something(const std::string &s) {
+        void lib1_hello(const std::string &s) {
             std::cout << "A string:" << s << "\n";
-        }"""))
+        }
+        """))
     (build_tree.source / "lib2.cpp").write_text(textwrap.dedent(r"""\
         #include <iostream>
         #include <string>
-        void print_something(const std::string &s);
-        void print_extra(const std::string &s) {
-            print_something(s + " " + s);
-        }"""))
+        void lib1_hello(const std::string &s);
+        void lib2_hello(const std::string &s) {
+            lib1_hello(s + " " + s);
+        }
+        """))
     (build_tree.source / "exe1.cpp").write_text(textwrap.dedent(r"""\
         #include <iostream>
         int main() {
             std::cout << "Hello world\n";
             return 0;
-        }"""))
+        }
+        """))
     (build_tree.source / "exe2.cpp").write_text(textwrap.dedent(r"""\
         #include <string>
-        void print_something(const std::string &s);
+        void lib1_hello(const std::string &s);
         int main() {
-            print_something("Hello from main");
+            lib1_hello("Hello from main");
             return 0;
-        }"""))
+        }
+        """))
     (build_tree.source / "exe3.cpp").write_text(textwrap.dedent(r"""\
         #include <string>
-        void print_extra(const std::string &s);
+        #include <interface.h>
+        void lib2_hello(const std::string &s);
         int main() {
-            print_extra("Hello from main!");
+            lib2_hello("Hello from main!");
+            interface_hello("main");
             return 0;
-        }"""))
+        }
+        """))
     return build_tree
 
 
@@ -131,6 +183,7 @@ def test_complete_project(complex_cxx_project, capsys):
     project2.reconfigure(quiet=True)
     data2 = project2.cmake_file_api.inspect_all()
     assert data2 is not None
+
 
 @pytest.mark.skipif(not CMAKE_SUPPORTS_TOOLCHAINS_V1, reason="CMake does not support toolchains V1 kind")
 def test_toolchain_kind_cxx(complex_cxx_project, capsys):
