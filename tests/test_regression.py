@@ -34,7 +34,7 @@ def build_tree(tmp_path_factory):
 @pytest.fixture
 def simple_cxx_project(build_tree):
     (build_tree.source / "CMakeLists.txt").write_text(textwrap.dedent("""\
-        cmake_minimum_required(VERSION 3.0)
+        cmake_minimum_required(VERSION 3.0...3.5)
         project(demoproject)
         add_library(alib alib.cpp)
         """))
@@ -53,7 +53,7 @@ def complex_cxx_project(build_tree):
         if(NOT CMAKE_HOST_SYSTEM_NAME STREQUAL "Darwin")
             set(CMAKE_SYSROOT "/usr/opt/toolchain")
         endif()
-        cmake_minimum_required(VERSION 3.0)
+        cmake_minimum_required(VERSION 3.0...3.5)
         project(demoproject C)
         enable_language(CXX)
 
