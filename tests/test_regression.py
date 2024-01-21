@@ -50,7 +50,9 @@ def simple_cxx_project(build_tree):
 @pytest.fixture
 def complex_cxx_project(build_tree):
     (build_tree.source / "CMakeLists.txt").write_text(textwrap.dedent("""\
-        set(CMAKE_SYSROOT "/usr/opt/toolchain")
+        if(NOT CMAKE_HOST_SYSTEM_NAME STREQUAL "Darwin")
+            set(CMAKE_SYSROOT "/usr/opt/toolchain")
+        endif()
         cmake_minimum_required(VERSION 3.0)
         project(demoproject C)
         enable_language(CXX)
