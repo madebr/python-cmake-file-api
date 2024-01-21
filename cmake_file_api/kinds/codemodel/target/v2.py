@@ -349,7 +349,7 @@ class TargetCompileGroup(object):
         includes = list(TargetCompileGroupInclude.from_dict(tci, backtraceGraph) for tci in dikt.get("includes", ()))
         precompileHeaders = list(TargetCompileGroupPCH.from_dict(tcpch, backtraceGraph) for tcpch in dikt.get("precompileHeaders", ()))
         defines = list(TargetCompileGroupDefine.from_dict(tcdef, backtraceGraph) for tcdef in dikt.get("defines", ()))
-        sysroot = Path(dikt["sysroot"]) if "sysroot" in dikt else None
+        sysroot = Path(dikt["sysroot"]["path"]) if "sysroot" in dikt and "path" in dikt["sysroot"] else None
         sources = list(target_sources[tsi] for tsi in dikt["sourceIndexes"])
         return cls(sources, language, compileCommandFragments, includes, precompileHeaders, defines, sysroot)
 
