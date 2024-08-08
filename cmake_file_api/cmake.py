@@ -8,7 +8,7 @@ from .reply.v1.api import CMakeFileApiV1
 PathLike = Union[Path, str]
 
 
-class CMakeProject(object):
+class CMakeProject:
     __slots__ = ("_source_path", "_build_path", "_api_version", "_cmake")
 
     def __init__(self, build_path: PathLike, source_path: Optional[PathLike]=None, api_version: Optional[int]=None, cmake: Optional[str]=None):
@@ -58,7 +58,7 @@ class CMakeProject(object):
         _, value = line.split("=", 1)
         return value
 
-    def configure(self, args: Optional[List[str]]=None, quiet: bool = False) -> None:
+    def configure(self, args: Optional[list[str]]=None, quiet: bool = False) -> None:
         if self._source_path is None:
             raise ValueError("Cannot configure with no source path")
         stdout = subprocess.DEVNULL if quiet else None

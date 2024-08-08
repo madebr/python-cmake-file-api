@@ -6,7 +6,7 @@ from cmake_file_api.kinds.common import VersionMajorMinor
 from cmake_file_api.kinds.kind import ObjectKind
 
 
-class CMakeToolchainCompilerImplicit(object):
+class CMakeToolchainCompilerImplicit:
     __slots__ = ("includeDirectories", "linkDirectories", "linkFrameworkDirectories", "linkLibraries")
 
     def __init__(self):
@@ -16,7 +16,7 @@ class CMakeToolchainCompilerImplicit(object):
         self.linkLibraries = []  # type: List[str]
 
     @classmethod
-    def from_dict(cls, dikt: Dict) -> "CMakeToolchainCompilerImplicit":
+    def from_dict(cls, dikt: dict) -> "CMakeToolchainCompilerImplicit":
         res = cls()
         if "includeDirectories" in dikt:
             res.includeDirectories.extend(Path(p) for p in dikt["includeDirectories"])
@@ -29,7 +29,7 @@ class CMakeToolchainCompilerImplicit(object):
         return res
 
 
-class CMakeToolchainCompiler(object):
+class CMakeToolchainCompiler:
     __slots__ = ("id", "path", "target", "version", "implicit")
 
     def __init__(self, id: Optional[str], path: Optional[Path], target: Optional[str], version: Optional[str], implicit: CMakeToolchainCompilerImplicit):
@@ -40,7 +40,7 @@ class CMakeToolchainCompiler(object):
         self.implicit = implicit
 
     @classmethod
-    def from_dict(cls, dikt: Dict) -> "CMakeToolchainCompiler":
+    def from_dict(cls, dikt: dict) -> "CMakeToolchainCompiler":
         id = dikt.get("id")
         path = Path(dikt["path"]) if "path" in dikt else None
         target = dikt.get("target")
@@ -58,16 +58,16 @@ class CMakeToolchainCompiler(object):
         )
 
 
-class CMakeToolchain(object):
+class CMakeToolchain:
     __slots__ = ("language", "compiler", "sourceFileExtensions")
 
-    def __init__(self, language: str, compiler: CMakeToolchainCompiler, sourceFileExtensions: Optional[List[str]]):
+    def __init__(self, language: str, compiler: CMakeToolchainCompiler, sourceFileExtensions: Optional[list[str]]):
         self.language = language
         self.compiler = compiler
         self.sourceFileExtensions = sourceFileExtensions
 
     @classmethod
-    def from_dict(cls, dikt: Dict) -> "CMakeToolchain":
+    def from_dict(cls, dikt: dict) -> "CMakeToolchain":
         language = dikt["language"]
         compiler = CMakeToolchainCompiler.from_dict(dikt["compiler"])
         sourceFileExtensions = dikt.get("sourceFileExtensions")
@@ -82,17 +82,17 @@ class CMakeToolchain(object):
         )
 
 
-class ToolchainsV1(object):
+class ToolchainsV1:
     KIND = ObjectKind.TOOLCHAINS
 
     __slots__ = ("version", "toolchains")
 
-    def __init__(self, version: VersionMajorMinor, toolchains: List[CMakeToolchain]):
+    def __init__(self, version: VersionMajorMinor, toolchains: list[CMakeToolchain]):
         self.version = version
         self.toolchains = toolchains
 
     @classmethod
-    def from_dict(cls, dikt: Dict, reply_path: Path) -> "ToolchainsV1":
+    def from_dict(cls, dikt: dict, reply_path: Path) -> "ToolchainsV1":
         version = VersionMajorMinor.from_dict(dikt["version"])
         toolchains = list(CMakeToolchain.from_dict(cmi) for cmi in dikt["toolchains"])
         return cls(version, toolchains)

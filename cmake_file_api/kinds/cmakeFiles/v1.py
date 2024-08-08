@@ -6,7 +6,7 @@ from cmake_file_api.kinds.common import CMakeSourceBuildPaths, VersionMajorMinor
 from cmake_file_api.kinds.kind import ObjectKind
 
 
-class CMakeFilesInput(object):
+class CMakeFilesInput:
     __slots__ = ("path", "isGenerator", "isExternal", "isCMake")
 
     def __init__(self, path: Path, isGenerator: Optional[bool], isExternal: Optional[bool], isCMake: Optional[bool]):
@@ -16,7 +16,7 @@ class CMakeFilesInput(object):
         self.isCMake = isCMake
 
     @classmethod
-    def from_dict(cls, dikt: Dict) -> "CMakeFilesInput":
+    def from_dict(cls, dikt: dict) -> "CMakeFilesInput":
         path = Path(dikt["path"])
         isGenerator = dikt.get("isGenerator")
         isExternal = dikt.get("isExternal")
@@ -33,18 +33,18 @@ class CMakeFilesInput(object):
         )
 
 
-class CMakeFilesV1(object):
+class CMakeFilesV1:
     KIND = ObjectKind.CMAKEFILES
 
     __slots__ = ("version", "paths", "inputs")
 
-    def __init__(self, version: VersionMajorMinor, paths: CMakeSourceBuildPaths, inputs: List[CMakeFilesInput]):
+    def __init__(self, version: VersionMajorMinor, paths: CMakeSourceBuildPaths, inputs: list[CMakeFilesInput]):
         self.version = version
         self.paths = paths
         self.inputs = inputs
 
     @classmethod
-    def from_dict(cls, dikt: Dict, reply_path: Path) -> "CmakeFilesV2":
+    def from_dict(cls, dikt: dict, reply_path: Path) -> "CmakeFilesV2":
         version = VersionMajorMinor.from_dict(dikt["version"])
         paths = CMakeSourceBuildPaths.from_dict(dikt["paths"])
         inputs = list(CMakeFilesInput.from_dict(cmi) for cmi in dikt["inputs"])

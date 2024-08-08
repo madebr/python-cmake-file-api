@@ -7,7 +7,7 @@ from cmake_file_api.kinds.kind import ObjectKind
 from .target.v2 import CodemodelTargetV2
 
 
-class CMakeProject(object):
+class CMakeProject:
     __slots__ = ("name", "parentProject", "childProjects", "directories", "targets")
 
     def __init__(self, name: str):
@@ -18,11 +18,11 @@ class CMakeProject(object):
         self.targets = []  # type:List[CMakeTarget]
 
     @classmethod
-    def from_dict(cls, dikt: Dict[str, str]) -> "CMakeProject":
+    def from_dict(cls, dikt: dict[str, str]) -> "CMakeProject":
         name = dikt["name"]
         return cls(name)
 
-    def update_from_dict(self, dikt: Dict[str, Any], configuration: "CMakeConfiguration") -> None:
+    def update_from_dict(self, dikt: dict[str, Any], configuration: "CMakeConfiguration") -> None:
         if "parentIndex" in dikt:
             self.parentProject = configuration.projects[dikt["parentIndex"]]
         self.childProjects = list(configuration.projects[ti] for ti in dikt.get("childIndexes", ()))
@@ -40,7 +40,7 @@ class CMakeProject(object):
         )
 
 
-class CMakeDirectory(object):
+class CMakeDirectory:
     __slots__ = ("source", "build", "parentDirectory", "childDirectories", "project", "targets", "minimumCMakeVersion", "hasInstallRule")
 
     def __init__(self, source: Path, build: Path, minimumCMakeVersion: Optional[str], hasInstallRule: bool):
@@ -54,14 +54,14 @@ class CMakeDirectory(object):
         self.hasInstallRule = hasInstallRule
 
     @classmethod
-    def from_dict(cls, dikt: Dict) -> "CMakeDirectory":
+    def from_dict(cls, dikt: dict) -> "CMakeDirectory":
         source = Path(dikt["source"])
         build = Path(dikt["build"])
         minimumCMakeVersion = dikt.get("minimumCMakeVersion", None)
         hasInstallRule = dikt.get("hasInstallRule", False)
         return cls(source, build, minimumCMakeVersion, hasInstallRule)
 
-    def update_from_dict(self, dikt: Dict, configuration: "CMakeConfiguration") -> None:
+    def update_from_dict(self, dikt: dict, configuration: "CMakeConfiguration") -> None:
         if "parentIndex" in dikt:
             self.parentDirectory = configuration.directories[dikt["parentIndex"]]
         self.childDirectories = list(configuration.directories[di] for di in dikt.get("childIndexes", ()))
@@ -73,7 +73,7 @@ class CMakeDirectory(object):
             type(self).__name__,
             self.source,
             self.build,
-            '{}'.format(self.parentDirectory) if self.parentDirectory else None,
+            f'{self.parentDirectory}' if self.parentDirectory else None,
             len(self.childDirectories),
             self.project.name if self.project else "",
             len(self.targets),
@@ -82,7 +82,7 @@ class CMakeDirectory(object):
         )
 
 
-class CMakeTarget(object):
+class CMakeTarget:
     __slots__ = ("name", "directory", "project", "jsonFile", "target")
 
     def __init__(self, name: str, directory: CMakeDirectory, project: CMakeProject, jsonFile: Path, target: CodemodelTargetV2):
@@ -92,12 +92,12 @@ class CMakeTarget(object):
         self.jsonFile = jsonFile
         self.target = target
 
-    def update_dependencies(self, lut_id_target: Dict[str, "CMakeTarget"]):
+    def update_dependencies(self, lut_id_target: dict[str, "CMakeTarget"]):
         lut = {k: v.target for k, v in lut_id_target.items()}
         self.target.update_dependencies(lut)
 
     @classmethod
-    def from_dict(cls, dikt: Dict, directories: List[CMakeDirectory], projects: List[CMakeProject], reply_path: Path) -> "CMakeTarget":
+    def from_dict(cls, dikt: dict, directories: list[CMakeDirectory], projects: list[CMakeProject], reply_path: Path) -> "CMakeTarget":
         name = dikt["name"]
         directory = directories[dikt["directoryIndex"]]
         project = projects[dikt["projectIndex"]]
@@ -116,17 +116,17 @@ class CMakeTarget(object):
         )
 
 
-class CMakeConfiguration(object):
+class CMakeConfiguration:
     __slots__ = ("name", "directories", "projects", "targets")
 
-    def __init__(self, name: str, directories: List[CMakeDirectory], projects: List[CMakeProject], targets: List[CMakeTarget]):
+    def __init__(self, name: str, directories: list[CMakeDirectory], projects: list[CMakeProject], targets: list[CMakeTarget]):
         self.name = name
         self.directories = directories
         self.projects = projects
         self.targets = targets
 
     @classmethod
-    def from_dict(cls, dikt: Dict, reply_path: Path) -> "CMakeConfiguration":
+    def from_dict(cls, dikt: dict, reply_path: Path) -> "CMakeConfiguration":
         name = dikt["name"]
         directories = list(CMakeDirectory.from_dict(d) for d in dikt["directories"])
         projects = list(CMakeProject.from_dict(d) for d in dikt["projects"])
@@ -153,18 +153,18 @@ class CMakeConfiguration(object):
         )
 
 
-class CodemodelV2(object):
+class CodemodelV2:
     KIND = ObjectKind.CODEMODEL
 
     __slots__ = ("version", "paths", "configurations")
 
-    def __init__(self, version: VersionMajorMinor, paths: CMakeSourceBuildPaths, configurations: List[CMakeConfiguration]):
+    def __init__(self, version: VersionMajorMinor, paths: CMakeSourceBuildPaths, configurations: list[CMakeConfiguration]):
         self.version = version
         self.paths = paths
         self.configurations = configurations
 
     @classmethod
-    def from_dict(cls, dikt: Dict[str, Any], reply_path: Path) -> "CodemodelV2":
+    def from_dict(cls, dikt: dict[str, Any], reply_path: Path) -> "CodemodelV2":
         if dikt["kind"] != cls.KIND.value:
             raise ValueError
         paths = CMakeSourceBuildPaths.from_dict(dikt["paths"])

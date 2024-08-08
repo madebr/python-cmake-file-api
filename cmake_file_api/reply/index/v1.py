@@ -8,7 +8,7 @@ from cmake_file_api.kinds.kind import ObjectKind
 from .file.v1 import CMakeReplyFileReferenceV1
 
 
-class CMakeGenerator(object):
+class CMakeGenerator:
     __slots__ = ("name", "multiConfig")
 
     def __init__(self, name: str, multiConfig: bool):
@@ -16,7 +16,7 @@ class CMakeGenerator(object):
         self.multiConfig = multiConfig
 
     @classmethod
-    def from_dict(cls, dikt: Dict) -> "CMakeGenerator":
+    def from_dict(cls, dikt: dict) -> "CMakeGenerator":
         name = dikt["name"]
         multiConfig = dikt["multiConfig"]
         return cls(name, multiConfig)
@@ -29,7 +29,7 @@ class CMakeGenerator(object):
         )
 
 
-class CMakeVersion(object):
+class CMakeVersion:
     def __init__(self, major: int, minor: int, patch: int, string: str, suffix: str, isDirty: bool):
         self.major = major
         self.minor = minor
@@ -39,7 +39,7 @@ class CMakeVersion(object):
         self.isDirty = isDirty
 
     @classmethod
-    def from_dict(cls, dikt: Dict) -> "CMakeVersion":
+    def from_dict(cls, dikt: dict) -> "CMakeVersion":
         major = dikt["major"]
         minor = dikt["minor"]
         patch = dikt["patch"]
@@ -60,7 +60,7 @@ class CMakeVersion(object):
         )
 
 
-class CMakePaths(object):
+class CMakePaths:
     __slots__ = ("cmake", "cpack", "ctest", "root")
 
     def __init__(self, cmake: Path, cpack: Path, ctest: Path, root: Path):
@@ -70,7 +70,7 @@ class CMakePaths(object):
         self.root = root
 
     @classmethod
-    def from_dict(cls, dikt: Dict) -> "CMakePaths":
+    def from_dict(cls, dikt: dict) -> "CMakePaths":
         cmake = Path(dikt["cmake"])
         cpack = Path(dikt["cpack"])
         ctest = Path(dikt["ctest"])
@@ -87,7 +87,7 @@ class CMakePaths(object):
         )
 
 
-class CMakeInfo(object):
+class CMakeInfo:
     __slots__ = ("version", "paths", "generator")
 
     def __init__(self, version: CMakeVersion, paths: CMakePaths, generator: CMakeGenerator):
@@ -96,7 +96,7 @@ class CMakeInfo(object):
         self.generator = generator
 
     @classmethod
-    def from_dict(cls, dikt: Dict) -> "CMakeInfo":
+    def from_dict(cls, dikt: dict) -> "CMakeInfo":
         version = CMakeVersion.from_dict(dikt["version"])
         paths = CMakePaths.from_dict(dikt["paths"])
         generator = CMakeGenerator.from_dict(dikt["generator"])
@@ -111,17 +111,17 @@ class CMakeInfo(object):
         )
 
 
-class CMakeReply(object):
+class CMakeReply:
     __slots__ = ("stateless", "stateful", "unknowns")
 
-    def __init__(self, stateless: Dict[Tuple[ObjectKind, int], CMakeReplyFileReferenceV1],
-                 stateful: Dict[str, Dict], unknowns: List[str]):
+    def __init__(self, stateless: dict[tuple[ObjectKind, int], CMakeReplyFileReferenceV1],
+                 stateful: dict[str, dict], unknowns: list[str]):
         self.stateless = stateless
         self.stateful = stateful
         self.unknowns = unknowns
 
     @classmethod
-    def from_dict(cls, dikt: Dict) -> "CMakeReply":
+    def from_dict(cls, dikt: dict) -> "CMakeReply":
         stateless = {}
         stateful = {}
         unknowns = []
@@ -141,16 +141,16 @@ class CMakeReply(object):
         return cls(stateless, stateful, unknowns)
 
 
-class CMakeReplyFileV1(object):
+class CMakeReplyFileV1:
     __slots__ = ("cmake", "objects", "reply")
 
-    def __init__(self, cmake: CMakeInfo, objects: List[CMakeReplyFileReferenceV1], reply: CMakeReply):
+    def __init__(self, cmake: CMakeInfo, objects: list[CMakeReplyFileReferenceV1], reply: CMakeReply):
         self.cmake = cmake
         self.objects = objects
         self.reply = reply
 
     @classmethod
-    def from_dict(cls, dikt: Dict) -> "CMakeReplyFileV1":
+    def from_dict(cls, dikt: dict) -> "CMakeReplyFileV1":
         cmake = CMakeInfo.from_dict(dikt["cmake"])
         objects = list(CMakeReplyFileReferenceV1.from_dict(do) for do in dikt["objects"])
         reply = CMakeReply.from_dict(dikt["reply"])
