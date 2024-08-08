@@ -400,8 +400,8 @@ class TargetSource:
         self.path = path
         self.isGenerated = isGenerated
         self.backtrace = backtrace
-        self.compileGroup = None  # type: Optional[TargetCompileGroup]
-        self.sourceGroup = None  # type: Optional[TargetSourceGroup]
+        self.compileGroup: Optional[TargetCompileGroup] = None
+        self.sourceGroup: Optional[TargetSourceGroup] = None
 
     @classmethod
     def from_dict(cls, dikt: dict, backtraceGraph: BacktraceGraph) -> "TargetSource":
