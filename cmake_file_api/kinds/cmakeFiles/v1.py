@@ -1,6 +1,6 @@
 import json
 from pathlib import Path
-from typing import Optional
+from typing import Any, Optional
 
 from cmake_file_api.kinds.common import CMakeSourceBuildPaths, VersionMajorMinor
 from cmake_file_api.kinds.kind import ObjectKind
@@ -16,7 +16,7 @@ class CMakeFilesInput:
         self.isCMake = isCMake
 
     @classmethod
-    def from_dict(cls, dikt: dict) -> "CMakeFilesInput":
+    def from_dict(cls, dikt: dict[str, Any]) -> "CMakeFilesInput":
         path = Path(dikt["path"])
         isGenerator = dikt.get("isGenerator")
         isExternal = dikt.get("isExternal")

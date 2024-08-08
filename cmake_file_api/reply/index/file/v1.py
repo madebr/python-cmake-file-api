@@ -1,4 +1,5 @@
 from pathlib import Path
+from typing import Any
 
 from cmake_file_api.kinds.kind import ObjectKind
 from cmake_file_api.kinds.common import VersionMajorMinor
@@ -11,7 +12,7 @@ class CMakeReplyFileReferenceV1:
         self.jsonFile = jsonFile
 
     @classmethod
-    def from_dict(cls, dikt: dict) -> "CMakeReplyFileReferenceV1":
+    def from_dict(cls, dikt: dict[str, Any]) -> "CMakeReplyFileReferenceV1":
         kind = ObjectKind(dikt["kind"])
         version = VersionMajorMinor.from_dict(dikt["version"])
         jsonFile = Path(dikt["jsonFile"])

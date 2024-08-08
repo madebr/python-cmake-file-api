@@ -1,7 +1,7 @@
 import json
 from pathlib import Path
 import re
-
+from typing import Any
 
 from cmake_file_api.kinds.kind import ObjectKind
 from .file.v1 import CMakeReplyFileReferenceV1
@@ -15,7 +15,7 @@ class CMakeGenerator:
         self.multiConfig = multiConfig
 
     @classmethod
-    def from_dict(cls, dikt: dict) -> "CMakeGenerator":
+    def from_dict(cls, dikt: dict[str, Any]) -> "CMakeGenerator":
         name = dikt["name"]
         multiConfig = dikt["multiConfig"]
         return cls(name, multiConfig)
@@ -38,7 +38,7 @@ class CMakeVersion:
         self.isDirty = isDirty
 
     @classmethod
-    def from_dict(cls, dikt: dict) -> "CMakeVersion":
+    def from_dict(cls, dikt: dict[str, Any]) -> "CMakeVersion":
         major = dikt["major"]
         minor = dikt["minor"]
         patch = dikt["patch"]
@@ -69,7 +69,7 @@ class CMakePaths:
         self.root = root
 
     @classmethod
-    def from_dict(cls, dikt: dict) -> "CMakePaths":
+    def from_dict(cls, dikt: dict[str, Any]) -> "CMakePaths":
         cmake = Path(dikt["cmake"])
         cpack = Path(dikt["cpack"])
         ctest = Path(dikt["ctest"])
@@ -95,7 +95,7 @@ class CMakeInfo:
         self.generator = generator
 
     @classmethod
-    def from_dict(cls, dikt: dict) -> "CMakeInfo":
+    def from_dict(cls, dikt: dict[str, Any]) -> "CMakeInfo":
         version = CMakeVersion.from_dict(dikt["version"])
         paths = CMakePaths.from_dict(dikt["paths"])
         generator = CMakeGenerator.from_dict(dikt["generator"])
@@ -120,7 +120,7 @@ class CMakeReply:
         self.unknowns = unknowns
 
     @classmethod
-    def from_dict(cls, dikt: dict) -> "CMakeReply":
+    def from_dict(cls, dikt: dict[str, Any]) -> "CMakeReply":
         stateless = {}
         stateful = {}
         unknowns = []
@@ -149,7 +149,7 @@ class CMakeReplyFileV1:
         self.reply = reply
 
     @classmethod
-    def from_dict(cls, dikt: dict) -> "CMakeReplyFileV1":
+    def from_dict(cls, dikt: dict[str, Any]) -> "CMakeReplyFileV1":
         cmake = CMakeInfo.from_dict(dikt["cmake"])
         objects = list(CMakeReplyFileReferenceV1.from_dict(do) for do in dikt["objects"])
         reply = CMakeReply.from_dict(dikt["reply"])

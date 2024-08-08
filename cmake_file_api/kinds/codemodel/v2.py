@@ -54,7 +54,7 @@ class CMakeDirectory:
         self.hasInstallRule = hasInstallRule
 
     @classmethod
-    def from_dict(cls, dikt: dict) -> "CMakeDirectory":
+    def from_dict(cls, dikt: dict[str, Any]) -> "CMakeDirectory":
         source = Path(dikt["source"])
         build = Path(dikt["build"])
         minimumCMakeVersion = dikt.get("minimumCMakeVersion", None)
