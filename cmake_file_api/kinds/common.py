@@ -2,7 +2,7 @@ from pathlib import Path
 from typing import Dict
 
 
-class VersionMajorMinor(object):
+class VersionMajorMinor:
     __slots__ = ("major", "minor")
 
     def __init__(self, major: int, minor: int):
@@ -10,7 +10,7 @@ class VersionMajorMinor(object):
         self.minor = minor
 
     @classmethod
-    def from_dict(cls, d: Dict[str, str]) -> "VersionMajorMinor":
+    def from_dict(cls, d: dict[str, str]) -> "VersionMajorMinor":
         return cls(int(d["major"]), int(d["minor"]))
 
     def __repr__(self) -> str:
@@ -20,7 +20,7 @@ class VersionMajorMinor(object):
         )
 
 
-class CMakeSourceBuildPaths(object):
+class CMakeSourceBuildPaths:
     __slots__ = ("source", "build")
 
     def __init__(self, source: Path, build: Path):

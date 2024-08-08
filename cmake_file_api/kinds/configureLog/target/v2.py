@@ -26,7 +26,7 @@ class ArchiveFragmentRole(enum.Enum):
     ARCHIVER_FLAGS = "flags"
 
 
-class BacktraceNode(object):
+class BacktraceNode:
     __slots__ = ("file", "line", "command", "parent")
 
     def __init__(self, file: Path, line: Optional[int], command: Optional[str]):
@@ -36,7 +36,7 @@ class BacktraceNode(object):
         self.parent = None
 
     @classmethod
-    def from_dict(cls, dikt: Dict, commands: List[str], files: List[Path]) -> "BacktraceNode":
+    def from_dict(cls, dikt: dict, commands: list[str], files: list[Path]) -> "BacktraceNode":
         file = files[dikt["file"]]
         line = dikt.get("line")
         command = None
@@ -44,7 +44,7 @@ class BacktraceNode(object):
             command = commands[dikt["command"]]
         return cls(file, line, command)
 
-    def update_from_dict(self, dikt: Dict, nodes: List["BacktraceNode"]) -> None:
+    def update_from_dict(self, dikt: dict, nodes: list["BacktraceNode"]) -> None:
         if "parent" in dikt:
             self.parent = nodes[dikt["parent"]]
 
@@ -57,14 +57,14 @@ class BacktraceNode(object):
         )
 
 
-class BacktraceGraph(object):
+class BacktraceGraph:
     __slots__ = ("nodes", )
 
-    def __init__(self, nodes: List[BacktraceNode]):
-        self.nodes: List[BacktraceNode] = nodes
+    def __init__(self, nodes: list[BacktraceNode]):
+        self.nodes: list[BacktraceNode] = nodes
 
     @classmethod
-    def from_dict(cls, dikt: Dict) -> "BacktraceGraph":
+    def from_dict(cls, dikt: dict) -> "BacktraceGraph":
         commands = dikt["commands"]
         files = list(Path(f) for f in dikt["files"])
         nodes = list(BacktraceNode.from_dict(btn, commands, files) for btn in dikt["nodes"])
@@ -79,7 +79,7 @@ class BacktraceGraph(object):
         )
 
 
-class TargetDestination(object):
+class TargetDestination:
     __slots__ = ("path", "backtrace")
 
     def __init__(self, path: Path, backtrace: BacktraceNode):
@@ -87,7 +87,7 @@ class TargetDestination(object):
         self.backtrace = backtrace
 
     @classmethod
-    def from_dict(cls, dikt: Dict, backtraceGraph: BacktraceGraph) -> "TargetDestination":
+    def from_dict(cls, dikt: dict, backtraceGraph: BacktraceGraph) -> "TargetDestination":
         path = Path(dikt["path"])
         backtrace = backtraceGraph.nodes[dikt["backtrace"]]
         return cls(path, backtrace)
@@ -100,15 +100,15 @@ class TargetDestination(object):
         )
 
 
-class TargetInstall(object):
+class TargetInstall:
     __slots__ = ("prefix", "destinations")
 
-    def __init__(self, prefix: Path, destinations: List[TargetDestination]):
+    def __init__(self, prefix: Path, destinations: list[TargetDestination]):
         self.prefix = prefix
         self.destinations = destinations
 
     @classmethod
-    def from_dict(cls, dikt: Dict, backtraceGraph: BacktraceGraph) -> "TargetInstall":
+    def from_dict(cls, dikt: dict, backtraceGraph: BacktraceGraph) -> "TargetInstall":
         prefix = Path(dikt["prefix"]["path"])
         destinations = list(TargetDestination.from_dict(td, backtraceGraph) for td in dikt["destinations"])
         return cls(prefix, destinations)
@@ -121,7 +121,7 @@ class TargetInstall(object):
         )
 
 
-class TargetLinkFragment(object):
+class TargetLinkFragment:
     __slots__ = ("fragment", "role")
 
     def __init__(self, fragment: str, role: LinkFragmentRole):
@@ -129,7 +129,7 @@ class TargetLinkFragment(object):
         self.role = role
 
     @classmethod
-    def from_dict(cls, dikt: Dict) -> "TargetLinkFragment":
+    def from_dict(cls, dikt: dict) -> "TargetLinkFragment":
         fragment = dikt["fragment"]
         role = LinkFragmentRole(dikt["role"])
         return cls(fragment, role)
@@ -142,17 +142,17 @@ class TargetLinkFragment(object):
         )
 
 
-class TargetLink(object):
+class TargetLink:
     __slots__ = ("language", "commandFragments", "lto", "sysroot")
 
-    def __init__(self, language: str, commandFragments: List[TargetLinkFragment], lto: Optional[bool], sysroot: Optional[Path]):
+    def __init__(self, language: str, commandFragments: list[TargetLinkFragment], lto: Optional[bool], sysroot: Optional[Path]):
         self.language = language
         self.commandFragments = commandFragments
         self.lto = lto
         self.sysroot = sysroot
 
     @classmethod
-    def from_dict(cls, dikt: Dict) -> "TargetLink":
+    def from_dict(cls, dikt: dict) -> "TargetLink":
         language = dikt["language"]
         commandFragments = []
         if "commandFragments" in dikt:
@@ -169,11 +169,11 @@ class TargetLink(object):
             self.language,
             self.commandFragments,
             self.lto,
-            "'{}'".format(self.sysroot) if self.sysroot else None,
+            f"'{self.sysroot}'" if self.sysroot else None,
         )
 
 
-class TargetArchiveFragment(object):
+class TargetArchiveFragment:
     __slots__ = ("fragment", "role")
 
     def __init__(self, fragment: str, role: ArchiveFragmentRole):
@@ -181,7 +181,7 @@ class TargetArchiveFragment(object):
         self.role = role
 
     @classmethod
-    def from_dict(cls, dikt: Dict) -> "TargetArchiveFragment":
+    def from_dict(cls, dikt: dict) -> "TargetArchiveFragment":
         fragment = dikt["fragment"]
         role = ArchiveFragmentRole(dikt["role"])
         return cls(fragment, role)
@@ -194,15 +194,15 @@ class TargetArchiveFragment(object):
         )
 
 
-class TargetArchive(object):
+class TargetArchive:
     __slots__ = ("commandFragments", "lto")
 
-    def __init__(self, commandFragments: List[TargetArchiveFragment], lto: Optional[bool]):
+    def __init__(self, commandFragments: list[TargetArchiveFragment], lto: Optional[bool]):
         self.commandFragments = commandFragments
         self.lto = lto
 
     @classmethod
-    def from_dict(cls, dikt: Dict) -> "TargetArchive":
+    def from_dict(cls, dikt: dict) -> "TargetArchive":
         commandFragments = []
         if "commandFragments" in dikt:
             commandFragments = list(TargetArchiveFragment.from_dict(tlf) for tlf in dikt["commandFragments"])
@@ -217,15 +217,15 @@ class TargetArchive(object):
         )
 
 
-class TargetSourceGroup(object):
+class TargetSourceGroup:
     __slots__ = ("name", "sources")
 
-    def __init__(self, name: str, sources: List["TargetSource"]):
+    def __init__(self, name: str, sources: list["TargetSource"]):
         self.name = name
         self.sources: list[TargetSource] = []
 
     @classmethod
-    def from_dict(cls, dikt: Dict, target_sources: List["TargetSource"]) -> "TargetSourceGroup":
+    def from_dict(cls, dikt: dict, target_sources: list["TargetSource"]) -> "TargetSourceGroup":
         name = dikt["name"]
         sources = list(target_sources[tsi] for tsi in dikt["sourceIndexes"])
         return cls(name, sources)
@@ -236,14 +236,14 @@ class TargetSourceGroup(object):
         )
 
 
-class TargetCompileFragment(object):
+class TargetCompileFragment:
     __slots__ = ("fragment", )
 
     def __init__(self, fragment: str):
         self.fragment = fragment
 
     @classmethod
-    def from_dict(cls, dikt: Dict) -> "TargetCompileFragment":
+    def from_dict(cls, dikt: dict) -> "TargetCompileFragment":
         fragment = dikt["fragment"]
         return cls(fragment)
 
@@ -254,7 +254,7 @@ class TargetCompileFragment(object):
         )
 
 
-class TargetCompileGroupInclude(object):
+class TargetCompileGroupInclude:
     __slots__ = ("path", "isSystem", "backtrace")
 
     def __init__(self, path: Path, isSystem: Optional[bool], backtrace: Optional[BacktraceNode]):
@@ -263,7 +263,7 @@ class TargetCompileGroupInclude(object):
         self.backtrace = backtrace
 
     @classmethod
-    def from_dict(cls, dikt: Dict, backtraceGraph: BacktraceGraph) -> "TargetCompileGroupInclude":
+    def from_dict(cls, dikt: dict, backtraceGraph: BacktraceGraph) -> "TargetCompileGroupInclude":
         path = Path(dikt["path"])
         isSystem = dikt.get("isSystem")
         backtrace = None
@@ -274,13 +274,13 @@ class TargetCompileGroupInclude(object):
     def __repr__(self) -> str:
         return "{}(path={}, system={}, backtrace={})".format(
             type(self).__name__,
-            "'{}'".format(self.path) if self.path else None,
+            f"'{self.path}'" if self.path else None,
             self.isSystem,
             self.backtrace,
         )
 
 
-class TargetCompileGroupPCH(object):
+class TargetCompileGroupPCH:
     __slots__ = ("header", "backtrace")
 
     def __init__(self, header: Path, backtrace: BacktraceNode | None):
@@ -288,7 +288,7 @@ class TargetCompileGroupPCH(object):
         self.backtrace = backtrace
 
     @classmethod
-    def from_dict(cls, dikt: Dict, backtraceGraph: BacktraceGraph) -> "TargetCompileGroupPCH":
+    def from_dict(cls, dikt: dict, backtraceGraph: BacktraceGraph) -> "TargetCompileGroupPCH":
         header = Path(dikt["header"])
         backtrace = None
         if "backtrace" in dikt:
@@ -303,7 +303,7 @@ class TargetCompileGroupPCH(object):
         )
 
 
-class TargetCompileGroupDefine(object):
+class TargetCompileGroupDefine:
     __slots__ = ("define", "backtrace")
 
     def __init__(self, define: str, backtrace: BacktraceNode | None):
@@ -311,7 +311,7 @@ class TargetCompileGroupDefine(object):
         self.backtrace = backtrace
 
     @classmethod
-    def from_dict(cls, dikt: Dict, backtraceGraph: BacktraceGraph) -> "TargetCompileGroupDefine":
+    def from_dict(cls, dikt: dict, backtraceGraph: BacktraceGraph) -> "TargetCompileGroupDefine":
         define = dikt["define"]
         backtrace = None
         if "backtrace" in dikt:
@@ -326,12 +326,12 @@ class TargetCompileGroupDefine(object):
         )
 
 
-class TargetCompileGroup(object):
+class TargetCompileGroup:
     __slots__ = ("sources", "language", "compileCommandFragments", "includes", "precompileHeaders", "defines", "sysroot")
 
-    def __init__(self, sources: List["TargetSource"], language: str,
-                 compileCommandFragments: List[TargetCompileFragment], includes: List[TargetCompileGroupInclude],
-                 precompileHeaders: List[TargetCompileGroupPCH], defines: List[TargetCompileGroupDefine],
+    def __init__(self, sources: list["TargetSource"], language: str,
+                 compileCommandFragments: list[TargetCompileFragment], includes: list[TargetCompileGroupInclude],
+                 precompileHeaders: list[TargetCompileGroupPCH], defines: list[TargetCompileGroupDefine],
                  sysroot: Optional[Path]):
         self.sources = sources
         self.language = language
@@ -342,7 +342,7 @@ class TargetCompileGroup(object):
         self.sysroot = sysroot
 
     @classmethod
-    def from_dict(cls, dikt: Dict, target_sources: List["TargetSource"], backtraceGraph: BacktraceGraph) -> "TargetCompileGroup":
+    def from_dict(cls, dikt: dict, target_sources: list["TargetSource"], backtraceGraph: BacktraceGraph) -> "TargetCompileGroup":
         language = dikt["language"]
         compileCommandFragments = list(TargetCompileFragment.from_dict(tcf) for tcf in dikt.get("compileCommandFragments", ()))
         includes = list(TargetCompileGroupInclude.from_dict(tci, backtraceGraph) for tci in dikt.get("includes", ()))
@@ -361,11 +361,11 @@ class TargetCompileGroup(object):
             len(self.includes),
             len(self.precompileHeaders),
             len(self.defines),
-            "'{}'".format(self.sysroot) if self.sysroot else None,
+            f"'{self.sysroot}'" if self.sysroot else None,
         )
 
 
-class TargetDependency(object):
+class TargetDependency:
     __slots__ = ("id", "target", "backtrace")
 
     def __init__(self, id: str, backtrace: Optional[BacktraceNode]):
@@ -373,11 +373,11 @@ class TargetDependency(object):
         self.target: CodemodelTargetV2 | None = None
         self.backtrace = backtrace
 
-    def update_dependency(self, lut_id_target: Dict[str, "CodemodelTargetV2"]):
+    def update_dependency(self, lut_id_target: dict[str, "CodemodelTargetV2"]):
         self.target = lut_id_target[self.id]
 
     @classmethod
-    def from_dict(cls, dikt: Dict, backtraceGraph: BacktraceGraph) -> "TargetDependency":
+    def from_dict(cls, dikt: dict, backtraceGraph: BacktraceGraph) -> "TargetDependency":
         id = dikt["id"]
         backtrace = None
         if "backtrace" in dikt:
@@ -393,7 +393,7 @@ class TargetDependency(object):
         )
 
 
-class TargetSource(object):
+class TargetSource:
     __slots__ = ("path", "isGenerated", "backtrace", "compileGroup", "sourceGroup")
 
     def __init__(self, path: Path, isGenerated: Optional[bool], backtrace: Optional[BacktraceNode]):
@@ -404,7 +404,7 @@ class TargetSource(object):
         self.sourceGroup = None  # type: Optional[TargetSourceGroup]
 
     @classmethod
-    def from_dict(cls, dikt: Dict, backtraceGraph: BacktraceGraph) -> "TargetSource":
+    def from_dict(cls, dikt: dict, backtraceGraph: BacktraceGraph) -> "TargetSource":
         path = Path(dikt["path"])
         isGenerated = dikt.get("isGenerated")
         backtrace = None
@@ -412,7 +412,7 @@ class TargetSource(object):
             backtrace = backtraceGraph.nodes[dikt["backtrace"]]
         return cls(path, isGenerated, backtrace)
 
-    def update_from_dict(self, dikt: Dict, modelTarget: "CodemodelTargetV2"):
+    def update_from_dict(self, dikt: dict, modelTarget: "CodemodelTargetV2"):
         if "compileGroupIndex" in dikt:
             self.compileGroup = modelTarget.compileGroups[dikt["compileGroupIndex"]]
         if "sourceGroupIndex" in dikt:
@@ -429,17 +429,17 @@ class TargetSource(object):
         )
 
 
-class CodemodelTargetV2(object):
+class CodemodelTargetV2:
     __slots__ = ("name", "id", "type", "backtrace", "folder", "paths", "nameOnDisk", "artifacts",
                  "isGeneratorProvided", "install", "link", "archive", "dependencies", "sources",
                  "sourceGroups", "compileGroups")
 
     def __init__(self, name: str, id: str, type: TargetType, backtrace: BacktraceNode, folder: Path,
-                 paths: CMakeSourceBuildPaths, nameOnDisk: str, artifacts: List[Path],
+                 paths: CMakeSourceBuildPaths, nameOnDisk: str, artifacts: list[Path],
                  isGeneratorProvided: Optional[bool], install: Optional[TargetInstall],
                  link: Optional[TargetLink], archive: Optional[TargetArchive],
-                 dependencies: List[TargetDependency], sources: List[TargetSource],
-                 sourceGroups: List[TargetSourceGroup], compileGroups: List[TargetCompileGroup]):
+                 dependencies: list[TargetDependency], sources: list[TargetSource],
+                 sourceGroups: list[TargetSourceGroup], compileGroups: list[TargetCompileGroup]):
         self.name = name
         self.id = id
         self.type = type
@@ -457,12 +457,12 @@ class CodemodelTargetV2(object):
         self.sourceGroups = sourceGroups
         self.compileGroups = compileGroups
 
-    def update_dependencies(self, lut_id_target: Dict[str, "CodemodelTargetV2"]):
+    def update_dependencies(self, lut_id_target: dict[str, "CodemodelTargetV2"]):
         for dependency in self.dependencies:
             dependency.update_dependency(lut_id_target)
 
     @classmethod
-    def from_dict(cls, dikt: Dict) -> "CodemodelTargetV2":
+    def from_dict(cls, dikt: dict) -> "CodemodelTargetV2":
         name = dikt["name"]
         id = dikt["id"]
         type = TargetType(dikt["type"])

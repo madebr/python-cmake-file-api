@@ -17,7 +17,7 @@ class CacheEntryType(Enum):
     TYPE_UNINITIALIZED = "UNINITIALIZED"
 
 
-class CacheEntryProperty(object):
+class CacheEntryProperty:
     __slots__ = ("name", "value")
 
     def __init__(self, name: str, value: str):
@@ -25,7 +25,7 @@ class CacheEntryProperty(object):
         self.value = value
 
     @classmethod
-    def from_dict(cls, dikt: Dict) -> "CacheEntryProperty":
+    def from_dict(cls, dikt: dict) -> "CacheEntryProperty":
         name = dikt["name"]
         value = dikt["value"]
         return cls(name, value)
@@ -38,17 +38,17 @@ class CacheEntryProperty(object):
         )
 
 
-class CacheEntry(object):
+class CacheEntry:
     __slots__ = ("name", "value", "type", "properties")
 
-    def __init__(self, name: str, value: str, type: CacheEntryType, properties: List[CacheEntryProperty]):
+    def __init__(self, name: str, value: str, type: CacheEntryType, properties: list[CacheEntryProperty]):
         self.name = name
         self.value = value
         self.type = type
         self.properties = properties
 
     @classmethod
-    def from_dict(cls, dikt: Dict) -> "CacheEntry":
+    def from_dict(cls, dikt: dict) -> "CacheEntry":
         name = dikt["name"]
         value = dikt["value"]
         type = CacheEntryType(dikt["type"])
@@ -65,17 +65,17 @@ class CacheEntry(object):
         )
 
 
-class CacheV2(object):
+class CacheV2:
     KIND = ObjectKind.CACHE
 
     __slots__ = ("version", "entries")
 
-    def __init__(self, version: VersionMajorMinor, entries: List[CacheEntry]):
+    def __init__(self, version: VersionMajorMinor, entries: list[CacheEntry]):
         self.version = version
         self.entries = entries
 
     @classmethod
-    def from_dict(cls, dikt: Dict, reply_path) -> "CacheV2":
+    def from_dict(cls, dikt: dict, reply_path) -> "CacheV2":
         if dikt["kind"] != cls.KIND.value:
             raise ValueError
         version = VersionMajorMinor.from_dict(dikt["version"])

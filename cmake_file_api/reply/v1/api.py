@@ -7,7 +7,7 @@ from cmake_file_api.reply.index.api import INDEX_API
 from cmake_file_api.kinds.kind import ObjectKind
 
 
-class CMakeFileApiV1(object):
+class CMakeFileApiV1:
     __slots__ = ("_build_path", )
 
     def __init__(self, build_path: Path):
@@ -17,19 +17,19 @@ class CMakeFileApiV1(object):
         result = self._build_path / ".cmake" / "api" / "v1" / "query"
         result.mkdir(parents=True, exist_ok=True)
         if not result.is_dir():
-            raise NotADirectoryError("Query path '{}' is not a directory".format(result))
+            raise NotADirectoryError(f"Query path '{result}' is not a directory")
         return result
 
     def _create_reply_path(self) -> Path:
         result = self._build_path / ".cmake" / "api" / "v1" / "reply"
         result.mkdir(parents=True, exist_ok=True)
         if not result.is_dir():
-            raise NotADirectoryError("Reply path '{}' is not a directory".format(result))
+            raise NotADirectoryError(f"Reply path '{result}' is not a directory")
         return result
 
     @staticmethod
     def _instrument_query_path(query_path: Path, kind: ObjectKind, kind_version: int) -> None:
-        (query_path / "{}-v{}".format(kind.value, kind_version)).touch()
+        (query_path / f"{kind.value}-v{kind_version}").touch()
 
     @staticmethod
     def _find_index_path(reply_path: Path) -> Optional[Path]:
@@ -78,7 +78,7 @@ class CMakeFileApiV1(object):
             return None
         return api.from_path(reply_path / str(data_path.jsonFile), reply_path)
 
-    def inspect_all(self) -> Dict[ObjectKind, Dict[int, object]]:
+    def inspect_all(self) -> dict[ObjectKind, dict[int, object]]:
         reply_path = self._create_reply_path()
         index = self._index(reply_path)
 

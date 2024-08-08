@@ -7,18 +7,18 @@ from cmake_file_api.kinds.kind import ObjectKind
 from .target.v2 import CodemodelTargetV2
 
 
-class ConfigureLogV1(object):
+class ConfigureLogV1:
     KIND = ObjectKind.CONFIGURELOG
 
     __slots__ = ("version", "path", "eventKindNames")
 
-    def __init__(self, version: VersionMajorMinor, path: Path, eventKindNames: List[str]):
+    def __init__(self, version: VersionMajorMinor, path: Path, eventKindNames: list[str]):
         self.version = version
         self.path = path
         self.eventKindNames = eventKindNames
 
     @classmethod
-    def from_dict(cls, dikt: Dict[str, Any], reply_path: Path) -> "ConfigureLogV1":
+    def from_dict(cls, dikt: dict[str, Any], reply_path: Path) -> "ConfigureLogV1":
         if dikt["kind"] != cls.KIND.value:
             raise ValueError
         path = Path(dikt["path"])
