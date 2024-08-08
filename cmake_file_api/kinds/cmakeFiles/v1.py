@@ -16,7 +16,7 @@ class CMakeFilesInput(object):
         self.isCMake = isCMake
 
     @classmethod
-    def from_dict(cls, dikt: Dict) -> "CMakeFileInput":
+    def from_dict(cls, dikt: Dict) -> "CMakeFilesInput":
         path = Path(dikt["path"])
         isGenerator = dikt.get("isGenerator")
         isExternal = dikt.get("isExternal")

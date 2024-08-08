@@ -61,7 +61,7 @@ class BacktraceGraph(object):
     __slots__ = ("nodes", )
 
     def __init__(self, nodes: List[BacktraceNode]):
-        self.nodes = nodes
+        self.nodes: List[BacktraceNode] = nodes
 
     @classmethod
     def from_dict(cls, dikt: Dict) -> "BacktraceGraph":
@@ -205,7 +205,7 @@ class TargetArchive(object):
     def from_dict(cls, dikt: Dict) -> "TargetArchive":
         commandFragments = []
         if "commandFragments" in dikt:
-            commandFragments = list(TargetLinkFragment.from_dict(tlf) for tlf in dikt["commandFragments"])
+            commandFragments = list(TargetArchiveFragment.from_dict(tlf) for tlf in dikt["commandFragments"])
         lto = dikt.get("lto")
         return cls(commandFragments, lto)
 
@@ -222,7 +222,7 @@ class TargetSourceGroup(object):
 
     def __init__(self, name: str, sources: List["TargetSource"]):
         self.name = name
-        self.sources = []
+        self.sources: list[TargetSource] = []
 
     @classmethod
     def from_dict(cls, dikt: Dict, target_sources: List["TargetSource"]) -> "TargetSourceGroup":
@@ -283,7 +283,7 @@ class TargetCompileGroupInclude(object):
 class TargetCompileGroupPCH(object):
     __slots__ = ("header", "backtrace")
 
-    def __init__(self, header: Path, backtrace: BacktraceNode):
+    def __init__(self, header: Path, backtrace: BacktraceNode | None):
         self.header = header
         self.backtrace = backtrace
 
@@ -306,7 +306,7 @@ class TargetCompileGroupPCH(object):
 class TargetCompileGroupDefine(object):
     __slots__ = ("define", "backtrace")
 
-    def __init__(self, define: str, backtrace: BacktraceNode):
+    def __init__(self, define: str, backtrace: BacktraceNode | None):
         self.define = define
         self.backtrace = backtrace
 
@@ -370,7 +370,7 @@ class TargetDependency(object):
 
     def __init__(self, id: str, backtrace: Optional[BacktraceNode]):
         self.id = id
-        self.target = None  # type: CodemodelTargetV2
+        self.target: CodemodelTargetV2 | None = None
         self.backtrace = backtrace
 
     def update_dependency(self, lut_id_target: Dict[str, "CodemodelTargetV2"]):
@@ -462,7 +462,7 @@ class CodemodelTargetV2(object):
             dependency.update_dependency(lut_id_target)
 
     @classmethod
-    def from_dict(cls, dikt: Dict, reply_path: Path) -> "CodemodelTargetV2":
+    def from_dict(cls, dikt: Dict) -> "CodemodelTargetV2":
         name = dikt["name"]
         id = dikt["id"]
         type = TargetType(dikt["type"])
