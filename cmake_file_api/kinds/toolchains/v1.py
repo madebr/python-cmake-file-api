@@ -1,6 +1,6 @@
 import json
 from pathlib import Path
-from typing import Optional
+from typing import Any, Optional
 
 from cmake_file_api.kinds.common import VersionMajorMinor
 from cmake_file_api.kinds.kind import ObjectKind
@@ -16,7 +16,7 @@ class CMakeToolchainCompilerImplicit:
         self.linkLibraries = []  # type: List[str]
 
     @classmethod
-    def from_dict(cls, dikt: dict) -> "CMakeToolchainCompilerImplicit":
+    def from_dict(cls, dikt: dict[str, Any]) -> "CMakeToolchainCompilerImplicit":
         res = cls()
         if "includeDirectories" in dikt:
             res.includeDirectories.extend(Path(p) for p in dikt["includeDirectories"])
@@ -40,7 +40,7 @@ class CMakeToolchainCompiler:
         self.implicit = implicit
 
     @classmethod
-    def from_dict(cls, dikt: dict) -> "CMakeToolchainCompiler":
+    def from_dict(cls, dikt: dict[str, Any]) -> "CMakeToolchainCompiler":
         id = dikt.get("id")
         path = Path(dikt["path"]) if "path" in dikt else None
         target = dikt.get("target")
@@ -67,7 +67,7 @@ class CMakeToolchain:
         self.sourceFileExtensions = sourceFileExtensions
 
     @classmethod
-    def from_dict(cls, dikt: dict) -> "CMakeToolchain":
+    def from_dict(cls, dikt: dict[str, Any]) -> "CMakeToolchain":
         language = dikt["language"]
         compiler = CMakeToolchainCompiler.from_dict(dikt["compiler"])
         sourceFileExtensions = dikt.get("sourceFileExtensions")

@@ -1,6 +1,7 @@
 from enum import Enum
 import json
 from pathlib import Path
+from typing import Any
 
 from cmake_file_api.kinds.common import VersionMajorMinor
 from cmake_file_api.kinds.kind import ObjectKind
@@ -24,7 +25,7 @@ class CacheEntryProperty:
         self.value = value
 
     @classmethod
-    def from_dict(cls, dikt: dict) -> "CacheEntryProperty":
+    def from_dict(cls, dikt: dict[str, Any]) -> "CacheEntryProperty":
         name = dikt["name"]
         value = dikt["value"]
         return cls(name, value)
@@ -47,7 +48,7 @@ class CacheEntry:
         self.properties = properties
 
     @classmethod
-    def from_dict(cls, dikt: dict) -> "CacheEntry":
+    def from_dict(cls, dikt: dict[str, Any]) -> "CacheEntry":
         name = dikt["name"]
         value = dikt["value"]
         type = CacheEntryType(dikt["type"])

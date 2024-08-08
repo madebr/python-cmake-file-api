@@ -1,7 +1,7 @@
 import enum
 import json
 from pathlib import Path
-from typing import Optional
+from typing import Any, Optional
 
 from cmake_file_api.kinds.common import CMakeSourceBuildPaths
 from cmake_file_api.kinds.configureLog.target.v2 import TargetSource
@@ -66,7 +66,7 @@ class BacktraceGraph:
         self.nodes = nodes
 
     @classmethod
-    def from_dict(cls, dikt: dict) -> "BacktraceGraph":
+    def from_dict(cls, dikt: dict[str, Any]) -> "BacktraceGraph":
         commands = dikt["commands"]
         files = list(Path(f) for f in dikt["files"])
         nodes = list(BacktraceNode.from_dict(btn, commands, files) for btn in dikt["nodes"])
@@ -131,7 +131,7 @@ class TargetLinkFragment:
         self.role = role
 
     @classmethod
-    def from_dict(cls, dikt: dict) -> "TargetLinkFragment":
+    def from_dict(cls, dikt: dict[str, Any]) -> "TargetLinkFragment":
         fragment = dikt["fragment"]
         role = LinkFragmentRole(dikt["role"])
         return cls(fragment, role)
@@ -154,7 +154,7 @@ class TargetLink:
         self.sysroot = sysroot
 
     @classmethod
-    def from_dict(cls, dikt: dict) -> "TargetLink":
+    def from_dict(cls, dikt: dict[str, Any]) -> "TargetLink":
         language = dikt["language"]
         commandFragments = []
         if "commandFragments" in dikt:
@@ -183,7 +183,7 @@ class TargetArchiveFragment:
         self.role = role
 
     @classmethod
-    def from_dict(cls, dikt: dict) -> "TargetArchiveFragment":
+    def from_dict(cls, dikt: dict[str, Any]) -> "TargetArchiveFragment":
         fragment = dikt["fragment"]
         role = ArchiveFragmentRole(dikt["role"])
         return cls(fragment, role)
@@ -204,7 +204,7 @@ class TargetArchive:
         self.lto = lto
 
     @classmethod
-    def from_dict(cls, dikt: dict) -> "TargetArchive":
+    def from_dict(cls, dikt: dict[str, Any]) -> "TargetArchive":
         commandFragments = []
         if "commandFragments" in dikt:
             commandFragments = list(TargetArchiveFragment.from_dict(tlf) for tlf in dikt["commandFragments"])
@@ -245,7 +245,7 @@ class TargetCompileFragment:
         self.fragment = fragment
 
     @classmethod
-    def from_dict(cls, dikt: dict) -> "TargetCompileFragment":
+    def from_dict(cls, dikt: dict[str, Any]) -> "TargetCompileFragment":
         fragment = dikt["fragment"]
         return cls(fragment)
 
