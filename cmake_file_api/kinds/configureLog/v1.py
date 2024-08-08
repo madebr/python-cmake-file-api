@@ -1,6 +1,6 @@
 import json
 from pathlib import Path
-from typing import Dict, List, Optional
+from typing import Any, Dict, List, Optional
 
 from cmake_file_api.kinds.common import CMakeSourceBuildPaths, VersionMajorMinor
 from cmake_file_api.kinds.kind import ObjectKind
@@ -18,7 +18,7 @@ class ConfigureLogV1(object):
         self.eventKindNames = eventKindNames
 
     @classmethod
-    def from_dict(cls, dikt: dict, reply_path: Path) -> "ConfigureLogV1":
+    def from_dict(cls, dikt: Dict[str, Any], reply_path: Path) -> "ConfigureLogV1":
         if dikt["kind"] != cls.KIND.value:
             raise ValueError
         path = Path(dikt["path"])

@@ -3,6 +3,7 @@ import subprocess
 from typing import List, Optional, Union
 
 from .reply.api import REPLY_API
+from .reply.v1.api import CMakeFileApiV1
 
 PathLike = Union[Path, str]
 
@@ -57,14 +58,14 @@ class CMakeProject(object):
         _, value = line.split("=", 1)
         return value
 
-    def configure(self, args: Optional[List[str]]=None, quiet=False):
+    def configure(self, args: Optional[List[str]]=None, quiet: bool = False) -> None:
         if self._source_path is None:
             raise ValueError("Cannot configure with no source path")
         stdout = subprocess.DEVNULL if quiet else None
         args = [str(self._cmake), str(self._source_path)] + (args if args else [])
         subprocess.check_call(args, cwd=str(self._build_path), stdout=stdout)
 
-    def reconfigure(self, quiet=False):
+    def reconfigure(self, quiet: bool = False) -> None:
         stdout = subprocess.DEVNULL if quiet else None
         args = [str(self._cmake)]
         if self._source_path:
@@ -74,5 +75,5 @@ class CMakeProject(object):
         subprocess.check_call(args, cwd=str(self._build_path), stdout=stdout)
 
     @property
-    def cmake_file_api(self):
+    def cmake_file_api(self) -> CMakeFileApiV1:
         return REPLY_API[self._api_version](self._build_path)
