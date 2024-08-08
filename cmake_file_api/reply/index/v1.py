@@ -1,7 +1,6 @@
 import json
 from pathlib import Path
 import re
-from typing import Dict, List, Tuple
 
 
 from cmake_file_api.kinds.kind import ObjectKind

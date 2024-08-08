@@ -1,7 +1,7 @@
 import enum
 import json
 from pathlib import Path
-from typing import Dict, List, Optional
+from typing import Optional
 
 from cmake_file_api.kinds.common import CMakeSourceBuildPaths
 

@@ -1,6 +1,6 @@
 from pathlib import Path
 import subprocess
-from typing import List, Optional, Union
+from typing import Optional, Union
 
 from .reply.api import REPLY_API
 from .reply.v1.api import CMakeFileApiV1

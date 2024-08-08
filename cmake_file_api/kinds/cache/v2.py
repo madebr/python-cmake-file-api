@@ -1,7 +1,6 @@
 from enum import Enum
 import json
 from pathlib import Path
-from typing import Dict, List
 
 from cmake_file_api.kinds.common import VersionMajorMinor
 from cmake_file_api.kinds.kind import ObjectKind

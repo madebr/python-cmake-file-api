@@ -1,5 +1,5 @@
 from pathlib import Path
-from typing import Dict, Optional
+from typing import Optional
 
 from cmake_file_api.errors import CMakeException
 from cmake_file_api.kinds.api import OBJECT_KINDS_API

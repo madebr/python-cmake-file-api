@@ -1,5 +1,4 @@
 from pathlib import Path
-from typing import Dict
 
 from cmake_file_api.kinds.kind import ObjectKind
 from cmake_file_api.kinds.common import VersionMajorMinor
