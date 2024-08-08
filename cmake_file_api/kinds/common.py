@@ -1,4 +1,5 @@
 from pathlib import Path
+from typing import Dict
 
 
 class VersionMajorMinor(object):
@@ -9,7 +10,7 @@ class VersionMajorMinor(object):
         self.minor = minor
 
     @classmethod
-    def from_dict(cls, d) -> "VersionMajorMinor":
+    def from_dict(cls, d: Dict[str, str]) -> "VersionMajorMinor":
         return cls(int(d["major"]), int(d["minor"]))
 
     def __repr__(self) -> str:

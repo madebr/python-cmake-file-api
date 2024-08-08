@@ -1,6 +1,6 @@
 import json
 from pathlib import Path
-from typing import Dict, List, Optional
+from typing import Any, Dict, List, Optional
 
 from cmake_file_api.kinds.common import CMakeSourceBuildPaths, VersionMajorMinor
 from cmake_file_api.kinds.kind import ObjectKind
@@ -18,11 +18,11 @@ class CMakeProject(object):
         self.targets = []  # type:List[CMakeTarget]
 
     @classmethod
-    def from_dict(cls, dikt: Dict) -> "CMakeProject":
+    def from_dict(cls, dikt: Dict[str, str]) -> "CMakeProject":
         name = dikt["name"]
         return cls(name)
 
-    def update_from_dict(self, dikt: Dict, configuration: "CMakeConfiguration") -> None:
+    def update_from_dict(self, dikt: Dict[str, Any], configuration: "CMakeConfiguration") -> None:
         if "parentIndex" in dikt:
             self.parentProject = configuration.projects[dikt["parentIndex"]]
         self.childProjects = list(configuration.projects[ti] for ti in dikt.get("childIndexes", ()))
@@ -75,7 +75,7 @@ class CMakeDirectory(object):
             self.build,
             '{}'.format(self.parentDirectory) if self.parentDirectory else None,
             len(self.childDirectories),
-            self.project.name,
+            self.project.name if self.project else "",
             len(self.targets),
             self.minimumCMakeVersion,
             self.hasInstallRule,
@@ -164,7 +164,7 @@ class CodemodelV2(object):
         self.configurations = configurations
 
     @classmethod
-    def from_dict(cls, dikt: dict, reply_path: Path) -> "CodemodelV2":
+    def from_dict(cls, dikt: Dict[str, Any], reply_path: Path) -> "CodemodelV2":
         if dikt["kind"] != cls.KIND.value:
             raise ValueError
         paths = CMakeSourceBuildPaths.from_dict(dikt["paths"])

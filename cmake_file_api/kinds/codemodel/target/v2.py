@@ -458,7 +458,7 @@ class CodemodelTargetV2(object):
         self.sourceGroups = sourceGroups
         self.compileGroups = compileGroups
 
-    def update_dependencies(self, lut_id_target: Dict[str, "CodemodelTargetV2"]):
+    def update_dependencies(self, lut_id_target: Dict[str, "CodemodelTargetV2"]) -> None:
         for dependency in self.dependencies:
             dependency.update_dependency(lut_id_target)
 

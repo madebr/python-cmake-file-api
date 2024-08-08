@@ -2,5 +2,6 @@
 /build/
 /.eggs/
 /venv/
+/.venv
 *.egg-info
 *.py[co]
