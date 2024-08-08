@@ -206,7 +206,7 @@ class TargetArchive(object):
     def from_dict(cls, dikt: Dict) -> "TargetArchive":
         commandFragments = []
         if "commandFragments" in dikt:
-            commandFragments = list(TargetLinkFragment.from_dict(tlf) for tlf in dikt["commandFragments"])
+            commandFragments = list(TargetArchiveFragment.from_dict(tlf) for tlf in dikt["commandFragments"])
         lto = dikt.get("lto")
         return cls(commandFragments, lto)
 

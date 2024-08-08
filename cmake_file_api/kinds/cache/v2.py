@@ -75,7 +75,7 @@ class CacheV2(object):
         self.entries = entries
 
     @classmethod
-    def from_dict(cls, dikt: Dict, reply_path) -> "CacheModelV2":
+    def from_dict(cls, dikt: Dict, reply_path) -> "CacheV2":
         if dikt["kind"] != cls.KIND.value:
             raise ValueError
         version = VersionMajorMinor.from_dict(dikt["version"])
@@ -83,7 +83,7 @@ class CacheV2(object):
         return cls(version, entries)
 
     @classmethod
-    def from_path(cls, path: Path, reply_path: Path) -> "CacheModelV2":
+    def from_path(cls, path: Path, reply_path: Path) -> "CacheV2":
         dikt = json.load(path.open())
         return cls.from_dict(dikt, reply_path)
 
