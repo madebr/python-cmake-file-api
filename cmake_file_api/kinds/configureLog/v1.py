@@ -35,6 +35,6 @@ class ConfigureLogV1:
         return "{}(version={}, paths={}, configurations={})".format(
             type(self).__name__,
             self.version,
-            self.paths,
-            self.configurations,
+            self.path,
+            self.eventKindNames,
         )

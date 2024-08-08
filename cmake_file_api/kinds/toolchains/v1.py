@@ -9,7 +9,7 @@ from cmake_file_api.kinds.kind import ObjectKind
 class CMakeToolchainCompilerImplicit:
     __slots__ = ("includeDirectories", "linkDirectories", "linkFrameworkDirectories", "linkLibraries")
 
-    def __init__(self):
+    def __init__(self) -> None:
         self.includeDirectories = []  # type: List[Path]
         self.linkDirectories = []  # type: List[Path]
         self.linkFrameworkDirectories = []  # type: List[Path]

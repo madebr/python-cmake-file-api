@@ -388,7 +388,7 @@ class TargetDependency:
         return "{}(id='{}', target='{}', backtrace={})".format(
             type(self).__name__,
             self.id,
-            self.target.name,
+            self.target.name if self.target else None,
             self.backtrace,
         )
 
@@ -467,14 +467,14 @@ class CodemodelTargetV2:
         id = dikt["id"]
         type = TargetType(dikt["type"])
         backtraceGraph = BacktraceGraph.from_dict(dikt["backtraceGraph"])
-        backtrace = None
+        backtrace: Optional[BacktraceNode] = None
         if "backtrace" in dikt:
             backtrace = backtraceGraph.nodes[dikt["backtrace"]]
         folder = None
         if "folder" in dikt:
             folder = Path(dikt["folder"]["name"])
         paths = CMakeSourceBuildPaths.from_dict(dikt["paths"])
-        nameOnDisk = dikt.get("nameOnDisk", None)
+        nameOnDisk = dikt.get("nameOnDisk", "")
         artifacts = list(Path(p["path"]) for p in dikt.get("artifacts", ()))
         isGeneratorProvided = dikt.get("isGeneratorProvided")
         install = None
@@ -497,9 +497,9 @@ class CodemodelTargetV2:
                    isGeneratorProvided, install, link, archive, dependencies, sources, sourceGroups, compileGroups)
 
     @classmethod
-    def from_path(cls, file: Path, reply_path: Path) -> "CodemodelTargetV2":
+    def from_path(cls, file: Path) -> "CodemodelTargetV2":
         dikt = json.load(file.open())
-        return cls.from_dict(dikt, reply_path)
+        return cls.from_dict(dikt)
 
     def __repr__(self) -> str:
         return "{}(name='{}', type={}, backtrace={})".format(

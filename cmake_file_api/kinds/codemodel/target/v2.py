@@ -221,9 +221,9 @@ class TargetArchive:
 class TargetSourceGroup:
     __slots__ = ("name", "sources")
 
-    def __init__(self, name: str, sources: list["TargetSource"]):
+    def __init__(self, name: str, sources: list[TargetSource]):
         self.name = name
-        self.sources = []
+        self.sources: list[TargetSource] = []
 
     @classmethod
     def from_dict(cls, dikt: dict, target_sources: list["TargetSource"]) -> "TargetSourceGroup":
@@ -371,7 +371,7 @@ class TargetDependency:
 
     def __init__(self, id: str, backtrace: Optional[BacktraceNode]):
         self.id = id
-        self.target = None  # type: CodemodelTargetV2
+        self.target = None  # type: Optional[CodemodelTargetV2]
         self.backtrace = backtrace
 
     def update_dependency(self, lut_id_target: dict[str, "CodemodelTargetV2"]):
@@ -389,7 +389,7 @@ class TargetDependency:
         return "{}(id='{}', target='{}', backtrace={})".format(
             type(self).__name__,
             self.id,
-            self.target.name,
+            self.target.name if self.target else None,
             self.backtrace,
         )
 
@@ -475,7 +475,7 @@ class CodemodelTargetV2:
         if "folder" in dikt:
             folder = Path(dikt["folder"]["name"])
         paths = CMakeSourceBuildPaths.from_dict(dikt["paths"])
-        nameOnDisk = dikt.get("nameOnDisk", None)
+        nameOnDisk = dikt.get("nameOnDisk", "")
         artifacts = list(Path(p["path"]) for p in dikt.get("artifacts", ()))
         isGeneratorProvided = dikt.get("isGeneratorProvided")
         install = None
