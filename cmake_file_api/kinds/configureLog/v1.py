@@ -1,10 +1,9 @@
 import json
 from pathlib import Path
-from typing import Any, Dict, List, Optional
+from typing import Any
 
-from cmake_file_api.kinds.common import CMakeSourceBuildPaths, VersionMajorMinor
+from cmake_file_api.kinds.common import VersionMajorMinor
 from cmake_file_api.kinds.kind import ObjectKind
-from .target.v2 import CodemodelTargetV2
 
 
 class ConfigureLogV1:
