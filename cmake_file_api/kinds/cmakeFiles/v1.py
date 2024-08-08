@@ -44,7 +44,7 @@ class CMakeFilesV1:
         self.inputs = inputs
 
     @classmethod
-    def from_dict(cls, dikt: dict, reply_path: Path) -> "CMakeFilesV1":
+    def from_dict(cls, dikt: dict[str, Any], reply_path: Path) -> "CMakeFilesV1":
         version = VersionMajorMinor.from_dict(dikt["version"])
         paths = CMakeSourceBuildPaths.from_dict(dikt["paths"])
         inputs = list(CMakeFilesInput.from_dict(cmi) for cmi in dikt["inputs"])

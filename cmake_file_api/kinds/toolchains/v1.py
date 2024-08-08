@@ -92,7 +92,7 @@ class ToolchainsV1:
         self.toolchains = toolchains
 
     @classmethod
-    def from_dict(cls, dikt: dict, reply_path: Path) -> "ToolchainsV1":
+    def from_dict(cls, dikt: dict[str, Any], reply_path: Path) -> "ToolchainsV1":
         version = VersionMajorMinor.from_dict(dikt["version"])
         toolchains = list(CMakeToolchain.from_dict(cmi) for cmi in dikt["toolchains"])
         return cls(version, toolchains)

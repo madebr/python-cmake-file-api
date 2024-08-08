@@ -114,7 +114,7 @@ class CMakeReply:
     __slots__ = ("stateless", "stateful", "unknowns")
 
     def __init__(self, stateless: dict[tuple[ObjectKind, int], CMakeReplyFileReferenceV1],
-                 stateful: dict[str, dict], unknowns: list[str]):
+                 stateful: dict[str, dict[str, Any]], unknowns: list[str]):
         self.stateless = stateless
         self.stateful = stateful
         self.unknowns = unknowns

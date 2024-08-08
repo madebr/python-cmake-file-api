@@ -1,4 +1,5 @@
 from pathlib import Path
+from typing import Any
 
 
 class VersionMajorMinor:
@@ -27,7 +28,7 @@ class CMakeSourceBuildPaths:
         self.build = build
 
     @classmethod
-    def from_dict(cls, d) -> "CMakeSourceBuildPaths":
+    def from_dict(cls, d: dict[str, Any]) -> "CMakeSourceBuildPaths":
         return cls(Path(d["source"]), Path(d["build"]))
 
     def __repr__(self) -> str:

@@ -4,7 +4,6 @@ from pathlib import Path
 from typing import Any, Optional
 
 from cmake_file_api.kinds.common import CMakeSourceBuildPaths
-from cmake_file_api.kinds.configureLog.target.v2 import TargetSource
 
 
 class TargetType(enum.Enum):
@@ -38,7 +37,7 @@ class BacktraceNode:
         self.parent = None
 
     @classmethod
-    def from_dict(cls, dikt: dict, commands: list[str], files: list[Path]) -> "BacktraceNode":
+    def from_dict(cls, dikt: dict[str, Any], commands: list[str], files: list[Path]) -> "BacktraceNode":
         file = files[dikt["file"]]
         line = dikt.get("line")
         command = None
@@ -46,7 +45,7 @@ class BacktraceNode:
             command = commands[dikt["command"]]
         return cls(file, line, command)
 
-    def update_from_dict(self, dikt: dict, nodes: list["BacktraceNode"]) -> None:
+    def update_from_dict(self, dikt: dict[str, Any], nodes: list["BacktraceNode"]) -> None:
         if "parent" in dikt:
             self.parent = nodes[dikt["parent"]]
 
@@ -89,7 +88,7 @@ class TargetDestination:
         self.backtrace = backtrace
 
     @classmethod
-    def from_dict(cls, dikt: dict, backtraceGraph: BacktraceGraph) -> "TargetDestination":
+    def from_dict(cls, dikt: dict[str, Any], backtraceGraph: BacktraceGraph) -> "TargetDestination":
         path = Path(dikt["path"])
         backtrace = backtraceGraph.nodes[dikt["backtrace"]]
         return cls(path, backtrace)
@@ -110,7 +109,7 @@ class TargetInstall:
         self.destinations = destinations
 
     @classmethod
-    def from_dict(cls, dikt: dict, backtraceGraph: BacktraceGraph) -> "TargetInstall":
+    def from_dict(cls, dikt: dict[str, Any], backtraceGraph: BacktraceGraph) -> "TargetInstall":
         prefix = Path(dikt["prefix"]["path"])
         destinations = list(TargetDestination.from_dict(td, backtraceGraph) for td in dikt["destinations"])
         return cls(prefix, destinations)
@@ -222,12 +221,12 @@ class TargetArchive:
 class TargetSourceGroup:
     __slots__ = ("name", "sources")
 
-    def __init__(self, name: str, sources: list[TargetSource]):
+    def __init__(self, name: str, sources: list["TargetSource"]):
         self.name = name
         self.sources: list[TargetSource] = []
 
     @classmethod
-    def from_dict(cls, dikt: dict, target_sources: list["TargetSource"]) -> "TargetSourceGroup":
+    def from_dict(cls, dikt: dict[str, Any], target_sources: list["TargetSource"]) -> "TargetSourceGroup":
         name = dikt["name"]
         sources = list(target_sources[tsi] for tsi in dikt["sourceIndexes"])
         return cls(name, sources)
@@ -265,7 +264,7 @@ class TargetCompileGroupInclude:
         self.backtrace = backtrace
 
     @classmethod
-    def from_dict(cls, dikt: dict, backtraceGraph: BacktraceGraph) -> "TargetCompileGroupInclude":
+    def from_dict(cls, dikt: dict[str, Any], backtraceGraph: BacktraceGraph) -> "TargetCompileGroupInclude":
         path = Path(dikt["path"])
         isSystem = dikt.get("isSystem")
         backtrace = None
@@ -290,7 +289,7 @@ class TargetCompileGroupPCH:
         self.backtrace = backtrace
 
     @classmethod
-    def from_dict(cls, dikt: dict, backtraceGraph: BacktraceGraph) -> "TargetCompileGroupPCH":
+    def from_dict(cls, dikt: dict[str, Any], backtraceGraph: BacktraceGraph) -> "TargetCompileGroupPCH":
         header = Path(dikt["header"])
         backtrace = None
         if "backtrace" in dikt:
@@ -313,7 +312,7 @@ class TargetCompileGroupDefine:
         self.backtrace = backtrace
 
     @classmethod
-    def from_dict(cls, dikt: dict, backtraceGraph: BacktraceGraph) -> "TargetCompileGroupDefine":
+    def from_dict(cls, dikt: dict[str, Any], backtraceGraph: BacktraceGraph) -> "TargetCompileGroupDefine":
         define = dikt["define"]
         backtrace = None
         if "backtrace" in dikt:
@@ -344,7 +343,7 @@ class TargetCompileGroup:
         self.sysroot = sysroot
 
     @classmethod
-    def from_dict(cls, dikt: dict, target_sources: list["TargetSource"], backtraceGraph: BacktraceGraph) -> "TargetCompileGroup":
+    def from_dict(cls, dikt: dict[str, Any], target_sources: list["TargetSource"], backtraceGraph: BacktraceGraph) -> "TargetCompileGroup":
         language = dikt["language"]
         compileCommandFragments = list(TargetCompileFragment.from_dict(tcf) for tcf in dikt.get("compileCommandFragments", ()))
         includes = list(TargetCompileGroupInclude.from_dict(tci, backtraceGraph) for tci in dikt.get("includes", ()))
@@ -375,11 +374,11 @@ class TargetDependency:
         self.target: Optional[CodemodelTargetV2] = None
         self.backtrace = backtrace
 
-    def update_dependency(self, lut_id_target: dict[str, "CodemodelTargetV2"]):
+    def update_dependency(self, lut_id_target: dict[str, "CodemodelTargetV2"]) -> None:
         self.target = lut_id_target[self.id]
 
     @classmethod
-    def from_dict(cls, dikt: dict, backtraceGraph: BacktraceGraph) -> "TargetDependency":
+    def from_dict(cls, dikt: dict[str, Any], backtraceGraph: BacktraceGraph) -> "TargetDependency":
         id = dikt["id"]
         backtrace = None
         if "backtrace" in dikt:
@@ -406,7 +405,7 @@ class TargetSource:
         self.sourceGroup: Optional[TargetSourceGroup] = None
 
     @classmethod
-    def from_dict(cls, dikt: dict, backtraceGraph: BacktraceGraph) -> "TargetSource":
+    def from_dict(cls, dikt: dict[str, Any], backtraceGraph: BacktraceGraph) -> "TargetSource":
         path = Path(dikt["path"])
         isGenerated = dikt.get("isGenerated")
         backtrace = None
@@ -414,7 +413,7 @@ class TargetSource:
             backtrace = backtraceGraph.nodes[dikt["backtrace"]]
         return cls(path, isGenerated, backtrace)
 
-    def update_from_dict(self, dikt: dict, modelTarget: "CodemodelTargetV2"):
+    def update_from_dict(self, dikt: dict[str, Any], modelTarget: "CodemodelTargetV2") -> None:
         if "compileGroupIndex" in dikt:
             self.compileGroup = modelTarget.compileGroups[dikt["compileGroupIndex"]]
         if "sourceGroupIndex" in dikt:
@@ -436,7 +435,7 @@ class CodemodelTargetV2:
                  "isGeneratorProvided", "install", "link", "archive", "dependencies", "sources",
                  "sourceGroups", "compileGroups")
 
-    def __init__(self, name: str, id: str, type: TargetType, backtrace: BacktraceNode, folder: Path,
+    def __init__(self, name: str, id: str, type: TargetType, backtrace: BacktraceNode, folder: Optional[Path],
                  paths: CMakeSourceBuildPaths, nameOnDisk: str, artifacts: list[Path],
                  isGeneratorProvided: Optional[bool], install: Optional[TargetInstall],
                  link: Optional[TargetLink], archive: Optional[TargetArchive],
@@ -464,7 +463,7 @@ class CodemodelTargetV2:
             dependency.update_dependency(lut_id_target)
 
     @classmethod
-    def from_dict(cls, dikt: dict, reply_path: Path) -> "CodemodelTargetV2":
+    def from_dict(cls, dikt: dict[str, Any], reply_path: Path) -> "CodemodelTargetV2":
         name = dikt["name"]
         id = dikt["id"]
         type = TargetType(dikt["type"])
