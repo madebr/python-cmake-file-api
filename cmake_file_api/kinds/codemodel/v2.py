@@ -61,7 +61,7 @@ class CMakeDirectory:
         hasInstallRule = dikt.get("hasInstallRule", False)
         return cls(source, build, minimumCMakeVersion, hasInstallRule)
 
-    def update_from_dict(self, dikt: dict, configuration: "CMakeConfiguration") -> None:
+    def update_from_dict(self, dikt: dict[str, Any], configuration: "CMakeConfiguration") -> None:
         if "parentIndex" in dikt:
             self.parentDirectory = configuration.directories[dikt["parentIndex"]]
         self.childDirectories = list(configuration.directories[di] for di in dikt.get("childIndexes", ()))
@@ -92,12 +92,12 @@ class CMakeTarget:
         self.jsonFile = jsonFile
         self.target = target
 
-    def update_dependencies(self, lut_id_target: dict[str, "CMakeTarget"]):
+    def update_dependencies(self, lut_id_target: dict[str, "CMakeTarget"]) -> None:
         lut = {k: v.target for k, v in lut_id_target.items()}
         self.target.update_dependencies(lut)
 
     @classmethod
-    def from_dict(cls, dikt: dict, directories: list[CMakeDirectory], projects: list[CMakeProject], reply_path: Path) -> "CMakeTarget":
+    def from_dict(cls, dikt: dict[str, Any], directories: list[CMakeDirectory], projects: list[CMakeProject], reply_path: Path) -> "CMakeTarget":
         name = dikt["name"]
         directory = directories[dikt["directoryIndex"]]
         project = projects[dikt["projectIndex"]]
@@ -126,7 +126,7 @@ class CMakeConfiguration:
         self.targets = targets
 
     @classmethod
-    def from_dict(cls, dikt: dict, reply_path: Path) -> "CMakeConfiguration":
+    def from_dict(cls, dikt: dict[str, Any], reply_path: Path) -> "CMakeConfiguration":
         name = dikt["name"]
         directories = list(CMakeDirectory.from_dict(d) for d in dikt["directories"])
         projects = list(CMakeProject.from_dict(d) for d in dikt["projects"])

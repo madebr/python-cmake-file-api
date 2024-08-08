@@ -3,8 +3,10 @@ from typing import Optional
 
 from cmake_file_api.errors import CMakeException
 from cmake_file_api.kinds.api import OBJECT_KINDS_API
+from cmake_file_api.kinds.cmakeFiles.v1 import CMakeFilesV1
 from cmake_file_api.reply.index.api import INDEX_API
 from cmake_file_api.kinds.kind import ObjectKind
+from cmake_file_api.reply.index.v1 import CMakeReplyFileV1
 
 
 class CMakeFileApiV1:
@@ -52,7 +54,7 @@ class CMakeFileApiV1:
             for kind_version in kind_api.keys():
                 self._instrument_query_path(query_path, kind, kind_version)
 
-    def _index(self, reply_path: Path):
+    def _index(self, reply_path: Path) -> CMakeReplyFileV1:
         index_path = self._find_index_path(reply_path)
         if index_path is None:
             raise CMakeException("CMake did not generate index file. Maybe your cmake version is too old?")
@@ -62,11 +64,11 @@ class CMakeFileApiV1:
             raise CMakeException("Unknown api version")
         return index_api.from_path(index_path)
 
-    def index(self):
+    def index(self) -> CMakeReplyFileV1:
         reply_path = self._create_reply_path()
         return self._index(reply_path)
 
-    def inspect(self, kind: ObjectKind, kind_version: int):
+    def inspect(self, kind: ObjectKind, kind_version: int) -> Optional[CMakeFilesV1]:
         reply_path = self._create_reply_path()
         index = self._index(reply_path)
 

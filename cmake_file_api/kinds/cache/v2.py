@@ -75,7 +75,7 @@ class CacheV2:
         self.entries = entries
 
     @classmethod
-    def from_dict(cls, dikt: dict, reply_path) -> "CacheV2":
+    def from_dict(cls, dikt: dict[str, Any], reply_path: Path) -> "CacheV2":
         if dikt["kind"] != cls.KIND.value:
             raise ValueError
         version = VersionMajorMinor.from_dict(dikt["version"])
