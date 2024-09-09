@@ -3,7 +3,6 @@ from typing import Any, Optional
 
 from cmake_file_api.errors import CMakeException
 from cmake_file_api.kinds.api import CMakeApiType, OBJECT_KINDS_API
-from cmake_file_api.kinds.cmakeFiles.v1 import CMakeFilesV1
 from cmake_file_api.reply.index.api import INDEX_API
 from cmake_file_api.kinds.kind import ObjectKind
 from cmake_file_api.reply.index.v1 import CMakeReplyFileV1
