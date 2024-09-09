@@ -284,7 +284,7 @@ class TargetCompileGroupInclude:
 class TargetCompileGroupPCH:
     __slots__ = ("header", "backtrace")
 
-    def __init__(self, header: Path, backtrace: BacktraceNode):
+    def __init__(self, header: Path, backtrace: Optional[BacktraceNode]):
         self.header = header
         self.backtrace = backtrace
 
@@ -307,7 +307,7 @@ class TargetCompileGroupPCH:
 class TargetCompileGroupDefine:
     __slots__ = ("define", "backtrace")
 
-    def __init__(self, define: str, backtrace: BacktraceNode):
+    def __init__(self, define: str, backtrace: Optional[BacktraceNode]):
         self.define = define
         self.backtrace = backtrace
 
