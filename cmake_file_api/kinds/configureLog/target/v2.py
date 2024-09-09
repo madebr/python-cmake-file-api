@@ -434,7 +434,7 @@ class CodemodelTargetV2:
                  "isGeneratorProvided", "install", "link", "archive", "dependencies", "sources",
                  "sourceGroups", "compileGroups")
 
-    def __init__(self, name: str, id: str, type: TargetType, backtrace: BacktraceNode, folder: Optional[Path],
+    def __init__(self, name: str, id: str, type: TargetType, backtrace: Optional[BacktraceNode], folder: Optional[Path],
                  paths: CMakeSourceBuildPaths, nameOnDisk: str, artifacts: list[Path],
                  isGeneratorProvided: Optional[bool], install: Optional[TargetInstall],
                  link: Optional[TargetLink], archive: Optional[TargetArchive],
