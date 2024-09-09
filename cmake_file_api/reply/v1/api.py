@@ -1,8 +1,8 @@
 from pathlib import Path
-from typing import Optional
+from typing import Any, Optional
 
 from cmake_file_api.errors import CMakeException
-from cmake_file_api.kinds.api import OBJECT_KINDS_API
+from cmake_file_api.kinds.api import CMakeApiType, OBJECT_KINDS_API
 from cmake_file_api.kinds.cmakeFiles.v1 import CMakeFilesV1
 from cmake_file_api.reply.index.api import INDEX_API
 from cmake_file_api.kinds.kind import ObjectKind
@@ -68,14 +68,14 @@ class CMakeFileApiV1:
         reply_path = self._create_reply_path()
         return self._index(reply_path)
 
-    def inspect(self, kind: ObjectKind, kind_version: int) -> Optional[CMakeFilesV1]:
+    def inspect(self, kind: ObjectKind, kind_version: int) -> Optional[CMakeApiType]:
         reply_path = self._create_reply_path()
         index = self._index(reply_path)
 
         data_path = index.reply.stateless.get((kind, kind_version), None)
         if data_path is None:
             return None
-        api = OBJECT_KINDS_API.get(kind, {}).get(kind_version, None)
+        api: Optional[CMakeApiType] = OBJECT_KINDS_API.get(kind, {}).get(kind_version, None)
         if api is None:
             return None
         return api.from_path(reply_path / str(data_path.jsonFile), reply_path)
@@ -84,7 +84,7 @@ class CMakeFileApiV1:
         reply_path = self._create_reply_path()
         index = self._index(reply_path)
 
-        result = {}
+        result: dict[ObjectKind, dict[int, Any]] = {}
         for (kind, kind_version), reply_file_ref in index.reply.stateless.items():
             api = OBJECT_KINDS_API.get(kind, {}).get(kind_version, None)
             if api is None:
