@@ -283,7 +283,7 @@ class TargetCompileGroupInclude:
 class TargetCompileGroupPCH:
     __slots__ = ("header", "backtrace")
 
-    def __init__(self, header: Path, backtrace: BacktraceNode | None):
+    def __init__(self, header: Path, backtrace: Optional[BacktraceNode]):
         self.header = header
         self.backtrace = backtrace
 
@@ -306,7 +306,7 @@ class TargetCompileGroupPCH:
 class TargetCompileGroupDefine:
     __slots__ = ("define", "backtrace")
 
-    def __init__(self, define: str, backtrace: BacktraceNode | None):
+    def __init__(self, define: str, backtrace: Optional[BacktraceNode]):
         self.define = define
         self.backtrace = backtrace
 
@@ -370,7 +370,7 @@ class TargetDependency:
 
     def __init__(self, id: str, backtrace: Optional[BacktraceNode]):
         self.id = id
-        self.target: CodemodelTargetV2 | None = None
+        self.target: Optional[CodemodelTargetV2] = None
         self.backtrace = backtrace
 
     def update_dependency(self, lut_id_target: dict[str, "CodemodelTargetV2"]) -> None:
