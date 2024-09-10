@@ -1,6 +1,5 @@
 from pathlib import Path
 from typing import Protocol
-from typing_extensions import Self
 
 from .kind import ObjectKind
 from .cache.api import CACHE_API
@@ -14,7 +13,7 @@ class CMakeApiType(Protocol):
     KIND: ObjectKind
 
     @classmethod
-    def from_path(cls, path: Path, reply_path: Path) -> Self:
+    def from_path(cls, path: Path, reply_path: Path) -> "CMakeApiType":
         ...
 
 OBJECT_KINDS_API: dict[ObjectKind, dict[int, CMakeApiType]] = {
