@@ -35,7 +35,7 @@ readme = {file = ["README.rst"]}
 [dependency-groups]
 dev = [
     "pytest",
-    "mypy"
+    "mypy[install-types]"
 ]
 
 [tool.mypy]

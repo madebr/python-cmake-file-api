@@ -19,12 +19,13 @@ jobs:
             -   uses: actions/setup-python@v5
                 with:
                     python-version: ${{ matrix.py }}
-            -   name: "Install requirements"
-                run: |
-                    python -m pip install -r requirements-dev.txt
+            -   name: Setup PDM
+                uses: pdm-project/setup-pdm@v4
+            -   name: Install dependencies
+                run: pdm install
             -   name: "Run pytest"
                 run: |
-                    pytest
+                    pdm run pytest
 
     check-typing:
         runs-on: ubuntu-latest
@@ -33,5 +34,8 @@ jobs:
             -   uses: actions/setup-python@v5
                 with:
                     python-version: "3.9"
-            -   run: pip install mypy
-            -   run: mypy --install-types --non-interactive
+            -   name: Setup PDM
+                uses: pdm-project/setup-pdm@v4
+            -   name: Install dependencies
+                run: pdm install
+            -   run: pdm run mypy --install-types --non-interactive
