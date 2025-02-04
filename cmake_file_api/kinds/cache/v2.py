@@ -84,7 +84,8 @@ class CacheV2:
 
     @classmethod
     def from_path(cls, path: Path, reply_path: Path) -> "CacheV2":
-        dikt = json.load(path.open())
+        with path.open() as file:
+            dikt = json.load(file)
         return cls.from_dict(dikt, reply_path)
 
     def __repr__(self) -> str:
