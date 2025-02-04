@@ -157,5 +157,6 @@ class CMakeReplyFileV1:
 
     @classmethod
     def from_path(cls, path: Path) -> "CMakeReplyFileV1":
-        dikt = json.load(path.open())
+        with path.open() as file:
+            dikt = json.load(file)
         return cls.from_dict(dikt)
