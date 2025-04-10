@@ -498,7 +498,8 @@ class CodemodelTargetV2:
 
     @classmethod
     def from_path(cls, file: Path) -> "CodemodelTargetV2":
-        dikt = json.load(file.open())
+        with file.open() as file:
+            dikt = json.load(file)
         return cls.from_dict(dikt)
 
     def __repr__(self) -> str:
