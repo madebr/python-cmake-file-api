@@ -255,6 +255,29 @@ class TargetCompileFragment:
         )
 
 
+class TargetLanguageStandard:
+    __slots__ = ("backtraces", "standard")
+
+    def __init__(self, standard: str, backtraces: Optional[list[BacktraceNode]]):
+        self.standard = standard
+        self.backtraces = backtraces
+
+    @classmethod
+    def from_dict(cls, dikt: dict[str, Any], backtraceGraph: BacktraceGraph) -> "TargetLanguageStandard":
+        standard = dikt["standard"]
+        backtraces = None
+        if "backtraces" in dikt:
+            backtraces = [backtraceGraph.nodes[backtrace] for backtrace in dikt["backtraces"]]
+        return cls(standard, backtraces)
+
+    def __repr__(self) -> str:
+        return "{}(standard={}, backtraces={})".format(
+            type(self).__name__,
+            self.standard,
+            self.backtraces,
+        )
+
+
 class TargetCompileGroupInclude:
     __slots__ = ("path", "isSystem", "backtrace")
 
@@ -328,14 +351,15 @@ class TargetCompileGroupDefine:
 
 
 class TargetCompileGroup:
-    __slots__ = ("sources", "language", "compileCommandFragments", "includes", "precompileHeaders", "defines", "sysroot")
+    __slots__ = ("sources", "language", "languageStandard", "compileCommandFragments", "includes", "precompileHeaders", "defines", "sysroot")
 
-    def __init__(self, sources: list["TargetSource"], language: str,
+    def __init__(self, sources: list["TargetSource"], language: str, languageStandard: Optional[TargetLanguageStandard],
                  compileCommandFragments: list[TargetCompileFragment], includes: list[TargetCompileGroupInclude],
                  precompileHeaders: list[TargetCompileGroupPCH], defines: list[TargetCompileGroupDefine],
                  sysroot: Optional[Path]):
         self.sources = sources
         self.language = language
+        self.languageStandard = languageStandard
         self.compileCommandFragments = compileCommandFragments
         self.includes = includes
         self.precompileHeaders = precompileHeaders
@@ -351,7 +375,8 @@ class TargetCompileGroup:
         defines = list(TargetCompileGroupDefine.from_dict(tcdef, backtraceGraph) for tcdef in dikt.get("defines", ()))
         sysroot = Path(dikt["sysroot"]["path"]) if "sysroot" in dikt and "path" in dikt["sysroot"] else None
         sources = list(target_sources[tsi] for tsi in dikt["sourceIndexes"])
-        return cls(sources, language, compileCommandFragments, includes, precompileHeaders, defines, sysroot)
+        languageStandard = TargetLanguageStandard.from_dict(dikt.get("languageStandard", {}), backtraceGraph) if "languageStandard" in dikt else None
+        return cls(sources, language, languageStandard, compileCommandFragments, includes, precompileHeaders, defines, sysroot)
 
     def __repr__(self) -> str:
         return "{}(sources={}, language='{}', compileCommandFragments={}, #includes={}, #precompileHeaders={}, #defines={}, sysroot={})".format(
