@@ -1,4 +1,5 @@
-from enum import Enum
+import dataclasses
+from enum import StrEnum
 import json
 from pathlib import Path
 from typing import Any
@@ -7,7 +8,7 @@ from cmake_file_api.kinds.common import VersionMajorMinor
 from cmake_file_api.kinds.kind import ObjectKind
 
 
-class CacheEntryType(Enum):
+class CacheEntryType(StrEnum):
     TYPE_BOOL = "BOOL"
     TYPE_FILEPATH = "FILEPATH"
     TYPE_PATH = "PATH"
@@ -37,15 +38,12 @@ class CacheEntryProperty:
             self.value,
         )
 
-
+@dataclasses.dataclass(frozen = True, slots = True)
 class CacheEntry:
-    __slots__ = ("name", "value", "type", "properties")
-
-    def __init__(self, name: str, value: str, type: CacheEntryType, properties: list[CacheEntryProperty]):
-        self.name = name
-        self.value = value
-        self.type = type
-        self.properties = properties
+    name : str
+    value : str
+    type : CacheEntryType
+    properties : list[CacheEntryProperty]
 
     @classmethod
     def from_dict(cls, dikt: dict[str, Any]) -> "CacheEntry":
@@ -54,16 +52,6 @@ class CacheEntry:
         type = CacheEntryType(dikt["type"])
         properties = list(CacheEntryProperty.from_dict(cep) for cep in dikt["properties"])
         return cls(name, value, type, properties)
-
-    def __repr__(self) -> str:
-        return "{}(name='{}', value='{}', type={}, properties={})".format(
-            type(self).__name__,
-            self.name,
-            self.value,
-            self.type.name,
-            repr(self.properties),
-        )
-
 
 class CacheV2:
     KIND = ObjectKind.CACHE
