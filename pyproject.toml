@@ -1,0 +1,44 @@
+[project]
+name = "cmake-file-api"
+dynamic = ["version"]
+description = "Read and interpret CMake's file-based API"
+license = {text = "MIT"}
+readme = {file = "README.md", content-type = "text/markdown"}
+requires-python = ">=3.9"
+
+classifiers = [
+    "Development Status :: 1 - Planning",
+    "Programming Language :: Python :: 3",
+    "Programming Language :: C",
+    "Programming Language :: C++",
+    "License :: OSI Approved :: MIT License",
+    "Operating System :: OS Independent"
+]
+
+authors = [
+    {name = "Anonymous Maarten", email = "anonymous.maarten@gmail.com"}
+]
+
+[project.urls]
+Homepage = "http://github.com/madebr/python-cmake-file-api"
+Repository = "http://github.com/madebr/python-cmake-file-api"
+
+[build-system]
+requires = ["setuptools>=65", "setuptools_scm[toml]>=7"]
+build-backend = "setuptools.build_meta"
+
+[tool.setuptools.dynamic]
+readme = {file = ["README.rst"]}
+
+[tool.setuptools_scm]
+
+[dependency-groups]
+dev = [
+    "pytest",
+    "mypy[install-types]"
+]
+
+[tool.mypy]
+files = [
+    "cmake_file_api"
+]
