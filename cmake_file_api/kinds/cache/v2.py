@@ -1,5 +1,5 @@
 import dataclasses
-from enum import StrEnum
+from enum import Enum
 import json
 from pathlib import Path
 from typing import Any
@@ -8,7 +8,7 @@ from cmake_file_api.kinds.common import VersionMajorMinor
 from cmake_file_api.kinds.kind import ObjectKind
 
 
-class CacheEntryType(StrEnum):
+class CacheEntryType(Enum):
     TYPE_BOOL = "BOOL"
     TYPE_FILEPATH = "FILEPATH"
     TYPE_PATH = "PATH"
