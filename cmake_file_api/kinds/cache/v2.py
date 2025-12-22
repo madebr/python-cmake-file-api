@@ -17,26 +17,16 @@ class CacheEntryType(Enum):
     TYPE_STATIC = "STATIC"
     TYPE_UNINITIALIZED = "UNINITIALIZED"
 
-
+@dataclasses.dataclass(slots=True, frozen=True, repr=True)
 class CacheEntryProperty:
-    __slots__ = ("name", "value")
-
-    def __init__(self, name: str, value: str):
-        self.name = name
-        self.value = value
+    name: str
+    value: str
 
     @classmethod
     def from_dict(cls, dikt: dict[str, Any]) -> "CacheEntryProperty":
         name = dikt["name"]
         value = dikt["value"]
         return cls(name, value)
-
-    def __repr__(self) -> str:
-        return "{}(name='{}', value='{}')".format(
-            type(self).__name__,
-            self.name,
-            self.value,
-        )
 
 @dataclasses.dataclass(frozen = True, slots = True)
 class CacheEntry:
