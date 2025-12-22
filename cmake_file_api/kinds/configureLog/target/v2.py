@@ -497,8 +497,8 @@ class CodemodelTargetV2:
                    isGeneratorProvided, install, link, archive, dependencies, sources, sourceGroups, compileGroups)
 
     @classmethod
-    def from_path(cls, file: Path) -> "CodemodelTargetV2":
-        with file.open() as file:
+    def from_path(cls, path: Path) -> "CodemodelTargetV2":
+        with path.open() as file:
             dikt = json.load(file)
         return cls.from_dict(dikt)
 
