@@ -74,7 +74,7 @@ class CMakeFileApiV1:
         data_path = index.reply.stateless.get((kind, kind_version), None)
         if data_path is None:
             return None
-        api: Optional[CMakeApiType] = OBJECT_KINDS_API.get(kind, {}).get(kind_version, None)
+        api: Optional[type[CMakeApiType]] = OBJECT_KINDS_API.get(kind, {}).get(kind_version, None)
         if api is None:
             return None
         return api.from_path(reply_path / str(data_path.jsonFile), reply_path)

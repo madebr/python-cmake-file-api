@@ -1,23 +1,16 @@
+import dataclasses
 from pathlib import Path
 from typing import Any
 
 
+@dataclasses.dataclass(frozen=True, slots=True)
 class VersionMajorMinor:
-    __slots__ = ("major", "minor")
-
-    def __init__(self, major: int, minor: int):
-        self.major = major
-        self.minor = minor
+    major: int
+    minor: int
 
     @classmethod
     def from_dict(cls, d: dict[str, int]) -> "VersionMajorMinor":
-        return cls(int(d["major"]), int(d["minor"]))
-
-    def __repr__(self) -> str:
-        return "Version({}.{})".format(
-            self.major,
-            self.minor,
-        )
+        return cls(d["major"], d["minor"])
 
 
 class CMakeSourceBuildPaths:

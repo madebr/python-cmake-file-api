@@ -1,3 +1,6 @@
+backports.strenum
+pylint
 pytest
-mypy
+mypy[mypyc]
 typeguard
+vcs-versioning

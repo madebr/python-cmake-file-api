@@ -57,10 +57,12 @@ class CMakeToolchain:
 
 @dataclasses.dataclass(frozen=True, slots=True)
 class ToolchainsV1:
-    KIND = ObjectKind.TOOLCHAINS
-
     version: VersionMajorMinor
     toolchains: list[CMakeToolchain]
+
+    @staticmethod
+    def kind() -> ObjectKind:
+        return ObjectKind.TOOLCHAINS
 
     @classmethod
     def from_dict(cls, dikt: dict[str, Any], reply_path: Path) -> "ToolchainsV1":
