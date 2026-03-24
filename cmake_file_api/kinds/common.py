@@ -10,7 +10,7 @@ class VersionMajorMinor:
         self.minor = minor
 
     @classmethod
-    def from_dict(cls, d: dict[str, str]) -> "VersionMajorMinor":
+    def from_dict(cls, d: dict[str, int]) -> "VersionMajorMinor":
         return cls(int(d["major"]), int(d["minor"]))
 
     def __repr__(self) -> str:

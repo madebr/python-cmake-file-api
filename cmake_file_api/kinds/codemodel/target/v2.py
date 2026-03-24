@@ -30,11 +30,11 @@ class ArchiveFragmentRole(enum.Enum):
 class BacktraceNode:
     __slots__ = ("file", "line", "command", "parent")
 
-    def __init__(self, file: Path, line: Optional[int], command: Optional[str]):
+    def __init__(self, file: Path, line: Optional[int], command: Optional[str]) -> None:
         self.file = file
         self.line = line
         self.command = command
-        self.parent = None
+        self.parent: Optional[BacktraceNode] = None
 
     @classmethod
     def from_dict(cls, dikt: dict[str, Any], commands: list[str], files: list[Path]) -> "BacktraceNode":

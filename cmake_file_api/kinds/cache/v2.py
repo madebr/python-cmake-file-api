@@ -2,7 +2,7 @@ import dataclasses
 from enum import Enum
 import json
 from pathlib import Path
-from typing import Any
+from typing import Any, ClassVar
 
 from cmake_file_api.kinds.common import VersionMajorMinor
 from cmake_file_api.kinds.kind import ObjectKind
@@ -44,7 +44,7 @@ class CacheEntry:
         return cls(name, value, type, properties)
 
 class CacheV2:
-    KIND = ObjectKind.CACHE
+    KIND: ClassVar = ObjectKind.CACHE
 
     __slots__ = ("version", "entries")
 
