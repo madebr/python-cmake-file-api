@@ -1,6 +1,6 @@
 import json
 from pathlib import Path
-from typing import Any, Optional
+from typing import Any, ClassVar, Optional
 
 from cmake_file_api.kinds.common import CMakeSourceBuildPaths, VersionMajorMinor
 from cmake_file_api.kinds.kind import ObjectKind
@@ -18,7 +18,7 @@ class CMakeProject:
         self.targets: list[CMakeTarget] = []
 
     @classmethod
-    def from_dict(cls, dikt: dict[str, str]) -> "CMakeProject":
+    def from_dict(cls, dikt: dict[str, Any]) -> "CMakeProject":
         name = dikt["name"]
         return cls(name)
 
@@ -57,7 +57,7 @@ class CMakeDirectory:
     def from_dict(cls, dikt: dict[str, Any]) -> "CMakeDirectory":
         source = Path(dikt["source"])
         build = Path(dikt["build"])
-        minimumCMakeVersion = dikt.get("minimumCMakeVersion", None)
+        minimumCMakeVersion = dikt['minimumCMakeVersion']['string'] if 'minimumCMakeVersion' in dikt else None
         hasInstallRule = dikt.get("hasInstallRule", False)
         return cls(source, build, minimumCMakeVersion, hasInstallRule)
 
@@ -154,7 +154,7 @@ class CMakeConfiguration:
 
 
 class CodemodelV2:
-    KIND = ObjectKind.CODEMODEL
+    KIND: ClassVar = ObjectKind.CODEMODEL
 
     __slots__ = ("version", "paths", "configurations")
 
