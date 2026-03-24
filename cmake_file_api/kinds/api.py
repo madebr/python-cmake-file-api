@@ -10,13 +10,15 @@ from .toolchains.api import TOOLCHAINS_API
 
 
 class CMakeApiType(Protocol):
-    KIND: ObjectKind
+    @staticmethod
+    def kind() -> ObjectKind:
+        ...
 
     @classmethod
     def from_path(cls, path: Path, reply_path: Path) -> "CMakeApiType":
         ...
 
-OBJECT_KINDS_API: dict[ObjectKind, dict[int, CMakeApiType]] = {
+OBJECT_KINDS_API: dict[ObjectKind, dict[int, type[CMakeApiType]]] = {
     ObjectKind.CACHE: CACHE_API,
     ObjectKind.CMAKEFILES: CMAKEFILES_API,
     ObjectKind.CONFIGURELOG: CONFIGURELOG_API,

@@ -1,3 +1,4 @@
+import dataclasses
 import json
 from pathlib import Path
 from typing import Any, Optional
@@ -33,15 +34,15 @@ class CMakeFilesInput:
         )
 
 
+@dataclasses.dataclass(frozen=True, slots=True)
 class CMakeFilesV1:
-    KIND = ObjectKind.CMAKEFILES
+    version: VersionMajorMinor
+    paths: CMakeSourceBuildPaths
+    inputs: list[CMakeFilesInput]
 
-    __slots__ = ("version", "paths", "inputs")
-
-    def __init__(self, version: VersionMajorMinor, paths: CMakeSourceBuildPaths, inputs: list[CMakeFilesInput]):
-        self.version = version
-        self.paths = paths
-        self.inputs = inputs
+    @staticmethod
+    def kind() -> ObjectKind:
+        return ObjectKind.CMAKEFILES
 
     @classmethod
     def from_dict(cls, dikt: dict[str, Any], reply_path: Path) -> "CMakeFilesV1":
@@ -55,11 +56,3 @@ class CMakeFilesV1:
         with path.open() as file:
             dikt = json.load(file)
         return cls.from_dict(dikt, reply_path)
-
-    def __repr__(self) -> str:
-        return "{}(version={}, paths={}, inputs={})".format(
-            type(self).__name__,
-            repr(self.version),
-            self.paths,
-            repr(self.inputs),
-        )

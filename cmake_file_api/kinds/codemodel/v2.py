@@ -1,6 +1,7 @@
+import dataclasses
 import json
 from pathlib import Path
-from typing import Any, ClassVar, Optional
+from typing import Any, Optional
 
 from cmake_file_api.kinds.common import CMakeSourceBuildPaths, VersionMajorMinor
 from cmake_file_api.kinds.kind import ObjectKind
@@ -153,19 +154,19 @@ class CMakeConfiguration:
         )
 
 
+@dataclasses.dataclass(frozen=True, slots=True)
 class CodemodelV2:
-    KIND: ClassVar = ObjectKind.CODEMODEL
+    version: VersionMajorMinor
+    paths: CMakeSourceBuildPaths
+    configurations: list[CMakeConfiguration]
 
-    __slots__ = ("version", "paths", "configurations")
-
-    def __init__(self, version: VersionMajorMinor, paths: CMakeSourceBuildPaths, configurations: list[CMakeConfiguration]):
-        self.version = version
-        self.paths = paths
-        self.configurations = configurations
+    @staticmethod
+    def kind() -> ObjectKind:
+        return ObjectKind.CODEMODEL
 
     @classmethod
     def from_dict(cls, dikt: dict[str, Any], reply_path: Path) -> "CodemodelV2":
-        if dikt["kind"] != cls.KIND.value:
+        if dikt["kind"] != cls.kind():
             raise ValueError
         paths = CMakeSourceBuildPaths.from_dict(dikt["paths"])
         version = VersionMajorMinor.from_dict(dikt["version"])
@@ -183,11 +184,3 @@ class CodemodelV2:
             return next(c for c in self.configurations if c.name == name)
         except StopIteration:
             raise KeyError("Unknown configuration")
-
-    def __repr__(self) -> str:
-        return "{}(version={}, paths={}, configurations={})".format(
-            type(self).__name__,
-            self.version,
-            self.paths,
-            self.configurations,
-        )
